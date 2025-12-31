@@ -1,5 +1,0 @@
-en:
-  link: here
-  file_imports:
-    alerts:
-      success: "File %{file_name} is in process. You can track the file status in %{link}"

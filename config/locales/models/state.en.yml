@@ -1,8 +1,0 @@
-en:
-  model:
-    states:
-      title: States
-      fields:
-        name: State name
-      errors:
-      messages:

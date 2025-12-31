@@ -1,7 +1,0 @@
-= content_for :title, t(".title")
-= bootstrap_box 'File imports', 'table', bootstrap_button_new do
-  .box-body
-    .row
-      .col-md-12
-        = turbo_frame_tag "imports_table" do
-          = render "imports_table", file_imports: @file_imports, pagy: @pagy

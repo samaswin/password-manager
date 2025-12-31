@@ -1,7 +1,0 @@
-*.slim linguist-language=Ruby
-*.css linguist-detectable=false
-*.java linguist-detectable=false
-*.rb linguist-detectable=true
-*.js linguist-detectable=false
-*.html linguist-detectable=false
-*.xml linguist-detectable=false

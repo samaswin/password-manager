@@ -1,7 +1,0 @@
-.user-panel
-  .user-panel-inner
-    .user-avatar
-      =raw show_image(current_user)
-    .user-info
-      p.user-name= current_user.name
-      span.user-role= current_user.admin? ? 'Admin' : 'User'

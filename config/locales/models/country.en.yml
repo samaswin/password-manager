@@ -1,8 +1,0 @@
-en:
-  model:
-    countries:
-      title: Countries
-      fields:
-        name: Country name
-      errors:
-      messages:

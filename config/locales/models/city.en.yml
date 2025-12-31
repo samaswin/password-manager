@@ -1,8 +1,0 @@
-en:
-  model:
-    cities:
-      title: City
-      fields:
-        name: City name
-      errors:
-      messages:

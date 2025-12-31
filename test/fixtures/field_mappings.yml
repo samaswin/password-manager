@@ -1,9 +1,0 @@
-one:
-  id: 1
-  fields:
-  type: users
-
-two:
-  id: 2
-  fields:
-  type: passwords
