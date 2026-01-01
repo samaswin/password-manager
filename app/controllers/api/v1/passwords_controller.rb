@@ -108,14 +108,19 @@ module Api
       def decrypt
         authorize @password, :decrypt?
 
+        # TODO: Add rate limiting to prevent brute force attempts or excessive logging
+        # Consider using rack-attack gem or similar middleware to limit requests per user/IP
+        # Recommended: max 10-20 decrypt requests per minute per user
+
         decrypted = @password.decrypt_password
 
         AuditLoggerService.log_password_action('decrypted', @password)
 
+        strength = PasswordStrengthService.calculate(decrypted)
         render json: {
           password: decrypted,
-          strength: PasswordStrengthService.calculate(decrypted),
-          strength_level: PasswordStrengthService.strength_level(PasswordStrengthService.calculate(decrypted))
+          strength: strength,
+          strength_level: PasswordStrengthService.strength_level(strength)
         }
       end
 
@@ -154,7 +159,7 @@ module Api
       private
 
       def set_password
-        @password = Password.find(params[:id])
+        @password = policy_scope(Password).find(params[:id])
       end
 
       def password_params

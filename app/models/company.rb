@@ -9,8 +9,8 @@ class Company < ApplicationRecord
   # Validations
   validates :name, presence: true
   validates :subdomain, uniqueness: true, allow_blank: true
-  validates :plan, inclusion: { in: %w[free basic premium enterprise] }
-  validates :max_users, numericality: { greater_than: 0 }
+  validates :plan, inclusion: { in: %w[free basic premium enterprise] }, presence: true
+  validates :max_users, numericality: { greater_than: 0, only_integer: true }
 
   # Scopes
   scope :active, -> { where(active: true) }

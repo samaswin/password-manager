@@ -11,16 +11,22 @@ class PasswordStrengthService
     # Length score (max 40 points)
     score += [length * 4, 40].min
 
-    # Character variety (max 30 points)
-    score += 10 if password =~ /[a-z]/ # lowercase
-    score += 10 if password =~ /[A-Z]/ # uppercase
-    score += 10 if password =~ /[0-9]/ # numbers
-    score += 10 if password =~ /[^a-zA-Z0-9]/ # special chars
+    # Character variety (max 40 points)
+    has_lowercase = password =~ /[a-z]/
+    has_uppercase = password =~ /[A-Z]/
+    has_numbers = password =~ /[0-9]/
+    has_special = password =~ /[^a-zA-Z0-9]/
 
-    # Additional complexity (max 30 points)
-    score += 10 if length >= 12
-    score += 10 if length >= 16
-    score += 10 if password =~ /[a-z]/ && password =~ /[A-Z]/ && password =~ /[0-9]/ && password =~ /[^a-zA-Z0-9]/
+    score += 10 if has_lowercase
+    score += 10 if has_uppercase
+    score += 10 if has_numbers
+    score += 10 if has_special
+
+    # Additional complexity bonus (max 20 points) - bonus for having all character types
+    # This is separate from length scoring to avoid double-counting
+    if has_lowercase && has_uppercase && has_numbers && has_special
+      score += 20
+    end
 
     # Cap at 100
     [score, 100].min

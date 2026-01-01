@@ -79,11 +79,7 @@ module Admin
       @passwords_by_category = @company.passwords.group(:category).count
 
       @passwords_by_strength = @company.passwords
-        .group("CASE
-          WHEN strength_score >= 80 THEN 'Strong'
-          WHEN strength_score >= 60 THEN 'Medium'
-          ELSE 'Weak'
-        END")
+        .group(password_strength_grouping_sql)
         .count
 
       @activity_by_day = AuditLog
@@ -114,6 +110,16 @@ module Admin
         :name, :subdomain, :active, :max_users, :plan,
         settings: {}
       )
+    end
+
+    # Returns SQL expression for grouping passwords by strength level
+    # This is a static SQL string with no user input, so it's safe from SQL injection
+    def password_strength_grouping_sql
+      "CASE
+        WHEN strength_score >= 80 THEN 'Strong'
+        WHEN strength_score >= 60 THEN 'Medium'
+        ELSE 'Weak'
+      END"
     end
   end
 end

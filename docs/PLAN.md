@@ -388,9 +388,6 @@ bin/dev
 - System theme detection as fallback
 - Responsive design for mobile/tablet/desktop
 
-## 📚 Documentation
-
-See the full detailed plan at: `/Users/ashwin.raj/.claude/plans/kind-nibbling-toast.md`
 
 ---
 

@@ -50,6 +50,9 @@ class Password < ApplicationRecord
       iv: encryption_iv,
       auth_tag: auth_tag
     )
+  rescue OpenSSL::Cipher::CipherError, ArgumentError => e
+    Rails.logger.error("Decryption failed for password #{id}: #{e.message}")
+    nil
   end
 
   def password_strength

@@ -13,7 +13,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /users
   def create
     ActsAsTenant.without_tenant do
-      super
+      # Prevent public registration - users must be created by admins/managers
+      # because they must belong to a company
+      redirect_to new_user_session_path, alert: "Public registration is not available. Please contact your administrator to create an account."
+      return
     end
   end
 

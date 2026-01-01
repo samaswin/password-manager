@@ -45,20 +45,23 @@ class BreachCheckService
         end
       else
         {
-          breached: false,
+          breached: nil,
+          checked: false,
           count: 0,
           error: "API request failed with status #{response.code}"
         }
       end
     rescue HTTParty::Error, Timeout::Error => e
       {
-        breached: false,
+        breached: nil,
+        checked: false,
         count: 0,
         error: "Network error: #{e.message}"
       }
     rescue StandardError => e
       {
-        breached: false,
+        breached: nil,
+        checked: false,
         count: 0,
         error: "Error: #{e.message}"
       }
