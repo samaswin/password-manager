@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="passwords-header">
+    <h4 class="page-title">
+      <i class="material-icons">vpn_key</i>
+      My Passwords
+    </h4>
+    <div class="header-actions">
+      <a href="/passwords/generate" class="btn waves-effect waves-light">
+        <i class="material-icons left">shuffle</i>
+        Generate Password
+      </a>
+      <a href="/passwords/new" class="btn waves-effect waves-light green">
+        <i class="material-icons left">add</i>
+        Add Password
+      </a>
+    </div>
+  </div>
+
+  <!-- Vue Password List Component -->
+  <% if @passwords %>
+    <PasswordList :initial-passwords='<%= @passwords.to_json.html_safe %>'></PasswordList>
+  <% else %>
+    <PasswordList></PasswordList>
+  <% end %>
+
+  <!-- Floating Action Button -->
+  <div class="fab-container">
+    <a href="/passwords/new" class="btn-floating btn-large fab-btn waves-effect waves-light">
+      <i class="material-icons">add</i>
+    </a>
+  </div>
+</div>

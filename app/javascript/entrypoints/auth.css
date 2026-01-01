@@ -1,0 +1,142 @@
+/* Authentication Pages Styles */
+.auth-container {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.auth-card {
+  padding: 48px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.auth-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(77, 182, 172, 0.3);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.auth-icon .material-icons {
+  font-size: 40px;
+  color: white;
+}
+
+.auth-header h4 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+}
+
+.auth-header p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.auth-form {
+  margin-bottom: 24px;
+}
+
+.remember-me {
+  margin: 20px 0;
+}
+
+.remember-me label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.form-actions {
+  margin-top: 32px;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-links {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--divider-color);
+}
+
+.auth-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-link:hover {
+  color: var(--primary-color);
+}
+
+.auth-link.primary {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.signup-link {
+  margin-top: 16px;
+  color: var(--text-secondary);
+}
+
+/* Features Preview (Registration Page) */
+.features-preview {
+  text-align: center;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: var(--text-secondary);
+}
+
+.feature-item .material-icons {
+  font-size: 32px;
+  color: var(--primary-color);
+}
+
+.feature-item span {
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 32px 24px;
+  }
+
+  .auth-header h4 {
+    font-size: 1.6rem;
+  }
+}

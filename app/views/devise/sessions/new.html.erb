@@ -1,0 +1,54 @@
+<div class="auth-container">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m8 l6 offset-m2 offset-l3">
+        <div class="auth-card glass-card" v-pre>
+          <div class="auth-header">
+            <div class="auth-icon">
+              <i class="material-icons">lock</i>
+            </div>
+            <h4>Welcome Back</h4>
+            <p>Sign in to access your secure vault</p>
+          </div>
+
+          <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'auth-form', 'v-pre': true }) do |f| %>
+            <div class="input-field">
+              <i class="material-icons prefix">email</i>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "validate" %>
+              <%= f.label :email %>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">lock</i>
+              <%= f.password_field :password, autocomplete: "current-password", class: "validate" %>
+              <%= f.label :password %>
+            </div>
+
+            <% if devise_mapping.rememberable? %>
+              <div class="remember-me">
+                <label>
+                  <%= f.check_box :remember_me %>
+                  <span>Remember me</span>
+                </label>
+              </div>
+            <% end %>
+
+            <div class="form-actions">
+              <%= f.submit "Sign In", class: "btn btn-large waves-effect waves-light btn-block" %>
+            </div>
+          <% end %>
+
+          <div class="auth-links">
+            <%= link_to "Forgot your password?", new_password_path(resource_name), class: "auth-link" %>
+            <% if devise_mapping.registerable? %>
+              <div class="signup-link">
+                Don't have an account?
+                <%= link_to "Sign up", new_registration_path(resource_name), class: "auth-link primary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

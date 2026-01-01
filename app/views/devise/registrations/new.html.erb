@@ -1,0 +1,77 @@
+<div class="auth-container">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m8 l6 offset-m2 offset-l3">
+        <div class="auth-card glass-card" v-pre>
+          <div class="auth-header">
+            <div class="auth-icon">
+              <i class="material-icons">person_add</i>
+            </div>
+            <h4>Create Account</h4>
+            <p>Start securing your passwords today</p>
+          </div>
+
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'auth-form' }) do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+
+            <div class="input-field">
+              <i class="material-icons prefix">email</i>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "validate" %>
+              <%= f.label :email %>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">lock</i>
+              <%= f.password_field :password, autocomplete: "new-password", class: "validate" %>
+              <%= f.label :password %>
+              <% if @minimum_password_length %>
+                <span class="helper-text">Minimum <%= @minimum_password_length %> characters</span>
+              <% end %>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">lock_outline</i>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "validate" %>
+              <%= f.label :password_confirmation %>
+            </div>
+
+            <div class="form-actions">
+              <%= f.submit "Create Account", class: "btn btn-large waves-effect waves-light btn-block green" %>
+            </div>
+          <% end %>
+
+          <div class="auth-links">
+            <div class="signup-link">
+              Already have an account?
+              <%= link_to "Sign in", new_session_path(resource_name), class: "auth-link primary" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features Preview -->
+        <div class="features-preview" style="margin-top: 32px;">
+          <div class="row">
+            <div class="col s12 m4">
+              <div class="feature-item">
+                <i class="material-icons">security</i>
+                <span>AES-256 Encryption</span>
+              </div>
+            </div>
+            <div class="col s12 m4">
+              <div class="feature-item">
+                <i class="material-icons">cloud_done</i>
+                <span>Cloud Sync</span>
+              </div>
+            </div>
+            <div class="col s12 m4">
+              <div class="feature-item">
+                <i class="material-icons">devices</i>
+                <span>Multi-Device</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

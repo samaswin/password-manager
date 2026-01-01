@@ -1,0 +1,197 @@
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 l6">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Secure Your Digital Life with
+            <span class="text-gradient">SecureVault</span>
+          </h1>
+          <p class="hero-description">
+            Enterprise-grade password management with AES-256 encryption.
+            Keep your passwords safe, organized, and accessible from anywhere.
+          </p>
+          <div class="hero-actions">
+            <% if user_signed_in? %>
+              <a href="/dashboard" class="btn btn-large waves-effect waves-light">
+                <i class="material-icons left">dashboard</i>
+                Go to Dashboard
+              </a>
+            <% else %>
+              <a href="/users/sign_up" class="btn btn-large waves-effect waves-light">
+                <i class="material-icons left">rocket_launch</i>
+                Get Started Free
+              </a>
+              <a href="/users/sign_in" class="btn btn-large btn-outline waves-effect">
+                <i class="material-icons left">login</i>
+                Sign In
+              </a>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 l6">
+        <div class="hero-illustration">
+          <div class="floating-card card-1 glass-card">
+            <i class="material-icons">security</i>
+            <span>AES-256 Encrypted</span>
+          </div>
+          <div class="floating-card card-2 glass-card">
+            <i class="material-icons">cloud_done</i>
+            <span>Cloud Sync</span>
+          </div>
+          <div class="floating-card card-3 glass-card">
+            <i class="material-icons">devices</i>
+            <span>Multi-Device</span>
+          </div>
+          <div class="hero-main-card glass-card">
+            <div class="lock-icon">
+              <i class="material-icons">lock</i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section">
+  <div class="container">
+    <h2 class="section-title text-center">
+      <span class="text-gradient">Powerful Features</span>
+    </h2>
+    <p class="section-subtitle text-center">
+      Everything you need to manage your passwords securely
+    </p>
+
+    <div class="row">
+      <div class="col s12 m6 l4">
+        <div class="feature-card glass-card hover-lift">
+          <div class="feature-icon" style="background: linear-gradient(135deg, #4db6ac, #80cbc4);">
+            <i class="material-icons">enhanced_encryption</i>
+          </div>
+          <h3>Military-Grade Encryption</h3>
+          <p>
+            Your passwords are encrypted with AES-256-GCM encryption,
+            the same standard used by governments and financial institutions.
+          </p>
+        </div>
+      </div>
+
+      <div class="col s12 m6 l4">
+        <div class="feature-card glass-card hover-lift">
+          <div class="feature-icon" style="background: linear-gradient(135deg, #4299e1, #63b3ed);">
+            <i class="material-icons">supervised_user_circle</i>
+          </div>
+          <h3>Team Collaboration</h3>
+          <p>
+            Share passwords securely with your team members.
+            Role-based access control keeps sensitive data protected.
+          </p>
+        </div>
+      </div>
+
+      <div class="col s12 m6 l4">
+        <div class="feature-card glass-card hover-lift">
+          <div class="feature-icon" style="background: linear-gradient(135deg, #48bb78, #68d391);">
+            <i class="material-icons">password</i>
+          </div>
+          <h3>Password Generator</h3>
+          <p>
+            Generate strong, unique passwords with customizable length
+            and character sets. Never use weak passwords again.
+          </p>
+        </div>
+      </div>
+
+      <div class="col s12 m6 l4">
+        <div class="feature-card glass-card hover-lift">
+          <div class="feature-icon" style="background: linear-gradient(135deg, #9f7aea, #b794f4);">
+            <i class="material-icons">assessment</i>
+          </div>
+          <h3>Security Audit</h3>
+          <p>
+            Get insights into your password health with strength analysis
+            and breach detection using haveibeenpwned API.
+          </p>
+        </div>
+      </div>
+
+      <div class="col s12 m6 l4">
+        <div class="feature-card glass-card hover-lift">
+          <div class="feature-icon" style="background: linear-gradient(135deg, #ed8936, #f6ad55);">
+            <i class="material-icons">history</i>
+          </div>
+          <h3>Audit Logs</h3>
+          <p>
+            Complete audit trail of all password access and modifications.
+            Track who accessed what and when for compliance.
+          </p>
+        </div>
+      </div>
+
+      <div class="col s12 m6 l4">
+        <div class="feature-card glass-card hover-lift">
+          <div class="feature-icon" style="background: linear-gradient(135deg, #ec4899, #f472b6);">
+            <i class="material-icons">dark_mode</i>
+          </div>
+          <h3>Dark & Light Mode</h3>
+          <p>
+            Beautiful user interface with both dark and light themes.
+            Automatically adapts to your system preferences.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m3">
+        <div class="stat-box">
+          <h3 class="stat-number text-gradient">256-bit</h3>
+          <p class="stat-label">Encryption</p>
+        </div>
+      </div>
+      <div class="col s12 m3">
+        <div class="stat-box">
+          <h3 class="stat-number text-gradient">99.9%</h3>
+          <p class="stat-label">Uptime</p>
+        </div>
+      </div>
+      <div class="col s12 m3">
+        <div class="stat-box">
+          <h3 class="stat-number text-gradient">24/7</h3>
+          <p class="stat-label">Access</p>
+        </div>
+      </div>
+      <div class="col s12 m3">
+        <div class="stat-box">
+          <h3 class="stat-number text-gradient">0</h3>
+          <p class="stat-label">Data Breaches</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section">
+  <div class="container">
+    <div class="cta-card glass-card">
+      <h2>Ready to Secure Your Passwords?</h2>
+      <p>Join thousands of users who trust SecureVault with their digital security</p>
+      <% unless user_signed_in? %>
+        <a href="/users/sign_up" class="btn btn-large waves-effect waves-light white" style="color: var(--primary-color);">
+          <i class="material-icons left">rocket_launch</i>
+          Start Free Today
+        </a>
+      <% end %>
+    </div>
+  </div>
+</div>

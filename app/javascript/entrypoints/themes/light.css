@@ -1,0 +1,183 @@
+/* Light Theme - 2025 Modern Design */
+body[data-theme="light"] {
+  /* Primary Colors - Teal Palette */
+  --primary-color: #00897b;
+  --primary-light: #4db6ac;
+  --primary-dark: #00695c;
+
+  /* Background Colors */
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8ecf1;
+
+  /* Card & Surface */
+  --card-bg: #ffffff;
+  --card-hover: #fafbfc;
+  --surface-elevated: #ffffff;
+
+  /* Text Colors */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  --text-muted: #a0aec0;
+
+  /* Border & Divider */
+  --border-color: #e2e8f0;
+  --divider-color: #edf2f7;
+
+  /* Status Colors */
+  --success-color: #48bb78;
+  --warning-color: #ed8936;
+  --error-color: #f56565;
+  --info-color: #4299e1;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* Input Colors */
+  --input-bg: #ffffff;
+  --input-border: #cbd5e0;
+  --input-focus: var(--primary-color);
+  --input-text: var(--text-primary);
+
+  /* Navbar */
+  --navbar-bg: #ffffff;
+  --navbar-text: var(--text-primary);
+  --navbar-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* Sidebar */
+  --sidebar-bg: #ffffff;
+  --sidebar-hover: #f7fafc;
+  --sidebar-active: #e6fffa;
+
+  /* Password Strength */
+  --strength-weak: #f56565;
+  --strength-medium: #ed8936;
+  --strength-good: #48bb78;
+  --strength-strong: #38a169;
+
+  /* Transitions */
+  --transition-speed: 0.3s;
+  --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Apply theme styles */
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed) var(--transition-easing),
+              color var(--transition-speed) var(--transition-easing);
+}
+
+/* Override Materialize colors for light theme */
+body[data-theme="light"] .card {
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-md);
+  border-radius: 12px;
+  transition: all var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="light"] .card:hover {
+  background-color: var(--card-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+body[data-theme="light"] nav {
+  background-color: var(--navbar-bg);
+  box-shadow: var(--navbar-shadow);
+}
+
+body[data-theme="light"] nav a {
+  color: var(--navbar-text);
+}
+
+body[data-theme="light"] .input-field input,
+body[data-theme="light"] .input-field textarea {
+  color: var(--input-text);
+  border-bottom-color: var(--input-border);
+}
+
+body[data-theme="light"] .input-field input:focus,
+body[data-theme="light"] .input-field textarea:focus {
+  border-bottom-color: var(--input-focus) !important;
+  box-shadow: 0 1px 0 0 var(--input-focus) !important;
+}
+
+body[data-theme="light"] .input-field input:focus + label,
+body[data-theme="light"] .input-field textarea:focus + label {
+  color: var(--input-focus) !important;
+}
+
+body[data-theme="light"] .input-field label {
+  color: var(--text-tertiary);
+}
+
+body[data-theme="light"] .input-field label.active {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  transform: translateY(-140%);
+}
+
+body[data-theme="light"] .input-field .prefix {
+  color: var(--text-tertiary);
+}
+
+body[data-theme="light"] .input-field .prefix.active {
+  color: var(--primary-color);
+}
+
+/* Glassmorphism Cards */
+body[data-theme="light"] .glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px var(--glass-shadow);
+  border-radius: 16px;
+  transition: all var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="light"] .glass-card:hover {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Buttons */
+body[data-theme="light"] .btn {
+  background-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+  border-radius: 8px;
+  transition: all var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="light"] .btn:hover {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Collection Items */
+body[data-theme="light"] .collection {
+  border-color: var(--border-color);
+  background-color: var(--card-bg);
+  border-radius: 8px;
+}
+
+body[data-theme="light"] .collection .collection-item {
+  background-color: var(--card-bg);
+  border-bottom-color: var(--divider-color);
+  transition: background-color var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="light"] .collection .collection-item:hover {
+  background-color: var(--sidebar-hover);
+}

@@ -1,0 +1,278 @@
+/* Dark Theme - 2025 Modern Design */
+body[data-theme="dark"] {
+  /* Primary Colors - Teal Palette (Lighter for dark theme) */
+  --primary-color: #4db6ac;
+  --primary-light: #80cbc4;
+  --primary-dark: #26a69a;
+
+  /* Background Colors - Modern dark grays (not pure black) */
+  --bg-primary: #0f1419;
+  --bg-secondary: #16181d;
+  --bg-tertiary: #1c1e24;
+
+  /* Card & Surface */
+  --card-bg: #1a1d23;
+  --card-hover: #1f2228;
+  --surface-elevated: #252930;
+
+  /* Text Colors */
+  --text-primary: #e8eaed;
+  --text-secondary: #b8bdc5;
+  --text-tertiary: #8a8f98;
+  --text-muted: #5f6368;
+
+  /* Border & Divider */
+  --border-color: #2d3139;
+  --divider-color: #252930;
+
+  /* Status Colors (Adjusted for dark theme) */
+  --success-color: #4ade80;
+  --warning-color: #fbbf24;
+  --error-color: #f87171;
+  --info-color: #60a5fa;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(26, 29, 35, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+
+  /* Shadows (Darker for dark theme) */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+
+  /* Input Colors */
+  --input-bg: #1f2228;
+  --input-border: #2d3139;
+  --input-focus: var(--primary-color);
+  --input-text: var(--text-primary);
+
+  /* Navbar */
+  --navbar-bg: #16181d;
+  --navbar-text: var(--text-primary);
+  --navbar-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+  /* Sidebar */
+  --sidebar-bg: #16181d;
+  --sidebar-hover: #1f2228;
+  --sidebar-active: #1a3a38;
+
+  /* Password Strength */
+  --strength-weak: #f87171;
+  --strength-medium: #fbbf24;
+  --strength-good: #4ade80;
+  --strength-strong: #22c55e;
+
+  /* Transitions */
+  --transition-speed: 0.3s;
+  --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Apply theme styles */
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed) var(--transition-easing),
+              color var(--transition-speed) var(--transition-easing);
+}
+
+/* Override Materialize colors for dark theme */
+body[data-theme="dark"] .card {
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-md);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="dark"] .card:hover {
+  background-color: var(--card-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--primary-dark);
+}
+
+body[data-theme="dark"] .card .card-title {
+  color: var(--text-primary);
+}
+
+body[data-theme="dark"] .card .card-content {
+  color: var(--text-secondary);
+}
+
+body[data-theme="dark"] nav {
+  background-color: var(--navbar-bg);
+  box-shadow: var(--navbar-shadow);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body[data-theme="dark"] nav a {
+  color: var(--navbar-text);
+}
+
+body[data-theme="dark"] .input-field input,
+body[data-theme="dark"] .input-field textarea {
+  color: var(--input-text);
+  border-bottom-color: var(--input-border);
+}
+
+body[data-theme="dark"] .input-field input:focus,
+body[data-theme="dark"] .input-field textarea:focus {
+  border-bottom-color: var(--input-focus) !important;
+  box-shadow: 0 1px 0 0 var(--input-focus) !important;
+}
+
+body[data-theme="dark"] .input-field input:focus + label,
+body[data-theme="dark"] .input-field textarea:focus + label {
+  color: var(--input-focus) !important;
+}
+
+body[data-theme="dark"] .input-field label {
+  color: var(--text-tertiary);
+}
+
+body[data-theme="dark"] .input-field label.active {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  transform: translateY(-140%);
+}
+
+body[data-theme="dark"] .input-field .prefix {
+  color: var(--text-tertiary);
+}
+
+body[data-theme="dark"] .input-field .prefix.active {
+  color: var(--primary-color);
+}
+
+/* Glassmorphism Cards */
+body[data-theme="dark"] .glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px var(--glass-shadow);
+  border-radius: 16px;
+  transition: all var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="dark"] .glass-card:hover {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+}
+
+/* Buttons */
+body[data-theme="dark"] .btn {
+  background-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+  border-radius: 8px;
+  transition: all var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="dark"] .btn:hover {
+  background-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+body[data-theme="dark"] .btn-flat {
+  color: var(--primary-color);
+}
+
+/* Collection Items */
+body[data-theme="dark"] .collection {
+  border-color: var(--border-color);
+  background-color: var(--card-bg);
+  border-radius: 8px;
+}
+
+body[data-theme="dark"] .collection .collection-item {
+  background-color: var(--card-bg);
+  border-bottom-color: var(--divider-color);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed) var(--transition-easing);
+}
+
+body[data-theme="dark"] .collection .collection-item:hover {
+  background-color: var(--sidebar-hover);
+}
+
+/* Modals */
+body[data-theme="dark"] .modal {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+body[data-theme="dark"] .modal .modal-footer {
+  background-color: var(--bg-tertiary);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Tooltips */
+body[data-theme="dark"] .material-tooltip {
+  background-color: var(--surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Dropdown */
+body[data-theme="dark"] .dropdown-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+body[data-theme="dark"] .dropdown-content li > a,
+body[data-theme="dark"] .dropdown-content li > span {
+  color: var(--text-primary);
+}
+
+body[data-theme="dark"] .dropdown-content li:hover {
+  background-color: var(--sidebar-hover);
+}
+
+/* Chips */
+body[data-theme="dark"] .chip {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Tables */
+body[data-theme="dark"] table {
+  color: var(--text-primary);
+}
+
+body[data-theme="dark"] table.striped > tbody > tr:nth-child(odd) {
+  background-color: var(--bg-tertiary);
+}
+
+body[data-theme="dark"] table.highlight > tbody > tr:hover {
+  background-color: var(--sidebar-hover);
+}
+
+body[data-theme="dark"] td,
+body[data-theme="dark"] th {
+  border-bottom-color: var(--divider-color);
+}
+
+/* Sidenav */
+body[data-theme="dark"] .sidenav {
+  background-color: var(--sidebar-bg);
+}
+
+body[data-theme="dark"] .sidenav li > a {
+  color: var(--text-primary);
+}
+
+body[data-theme="dark"] .sidenav li > a:hover {
+  background-color: var(--sidebar-hover);
+}
+
+/* Preloader */
+body[data-theme="dark"] .preloader-wrapper .spinner-layer {
+  border-color: var(--primary-color);
+}

@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="page-header" style="margin-bottom: 32px;">
+    <a href="/passwords" class="btn-flat waves-effect" style="margin-bottom: 16px; color: var(--text-secondary);">
+      <i class="material-icons left">arrow_back</i>
+      Back to Passwords
+    </a>
+    <h4 class="page-title" style="margin: 0;">
+      <i class="material-icons">edit</i>
+      Edit Password
+    </h4>
+  </div>
+
+  <% if @password %>
+    <PasswordForm :password='<%= @password.to_json.html_safe %>' :is-edit="true"></PasswordForm>
+  <% else %>
+    <PasswordForm :is-edit="true"></PasswordForm>
+  <% end %>
+</div>

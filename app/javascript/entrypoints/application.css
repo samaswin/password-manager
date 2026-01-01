@@ -1,0 +1,241 @@
+/* Materialize CSS */
+@import 'materialize-css/dist/css/materialize.min.css';
+
+/* Material Icons */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* Theme System */
+@import './themes/light.css';
+@import './themes/dark.css';
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Custom Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+main {
+  flex: 1 0 auto;
+  padding: 24px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+body[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #1a1d23;
+}
+
+body[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+body[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #2d3139;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+/* Utility Classes */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Micro-interactions */
+.hover-scale {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Loading Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    to right,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 20%,
+    var(--bg-secondary) 40%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 2000px 100%;
+  border-radius: 8px;
+}
+
+/* Password Strength Indicator */
+.strength-meter {
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  margin-top: 8px;
+  transition: all 0.3s ease;
+}
+
+.strength-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.strength-weak {
+  background: var(--strength-weak);
+  width: 25%;
+}
+
+.strength-medium {
+  background: var(--strength-medium);
+  width: 50%;
+}
+
+.strength-good {
+  background: var(--strength-good);
+  width: 75%;
+}
+
+.strength-strong {
+  background: var(--strength-strong);
+  width: 100%;
+}
+
+/* Floating Action Button Enhancement */
+.fab-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 998;
+}
+
+.fab-btn {
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fab-btn:hover {
+  box-shadow: var(--shadow-xl);
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* Toast Notifications */
+body[data-theme="dark"] .toast {
+  background-color: var(--surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Container Improvements */
+.container {
+  max-width: 1200px;
+}
+
+/* Card Enhancements */
+.stat-card {
+  padding: 24px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  main {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 12px;
+  }
+
+  .fab-container {
+    bottom: 16px;
+    right: 16px;
+  }
+}
