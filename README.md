@@ -45,7 +45,7 @@ This will start both the Rails server (port 3000) and Vite dev server.
 
 **Access the application via subdomain:**
 - Admin: [http://admin.localhost:3000](http://admin.localhost:3000)
-- Company: [http://{subdomain}.localhost:3000](http://acme.localhost:3000) (e.g., `acme.localhost:3000`)
+- Company: [http://subdomain.localhost:3000](http://acme.localhost:3000) (e.g., `acme.localhost:3000`)
 
 **Note:** The base domain (`http://localhost:3000`) is blocked. You must use a subdomain to access the application.
 
@@ -78,3 +78,12 @@ rails test:system
 ## Deployment
 
 This app is configured with Kamal for deployment. See `config/deploy.yml` for deployment configuration.
+
+## License
+
+This project is licensed under a custom non-commercial license. See [LICENSE](LICENSE) file for details.
+
+**Summary:**
+- ✅ You may use this software
+- ✅ You may modify this software
+- ❌ You may NOT sell this software or use it for commercial purposes
