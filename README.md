@@ -43,7 +43,11 @@ bin/dev
 
 This will start both the Rails server (port 3000) and Vite dev server.
 
-Visit [http://localhost:3000](http://localhost:3000) to see the application.
+**Access the application via subdomain:**
+- Admin: [http://admin.localhost:3000](http://admin.localhost:3000)
+- Company: [http://{subdomain}.localhost:3000](http://acme.localhost:3000) (e.g., `acme.localhost:3000`)
+
+**Note:** The base domain (`http://localhost:3000`) is blocked. You must use a subdomain to access the application.
 
 ### Project Structure
 

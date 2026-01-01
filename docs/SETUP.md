@@ -54,15 +54,18 @@ The seed file now creates comprehensive demo data:
 
 ## Test Credentials
 
-### System Admin
+### System Admin (Admin Company)
 ```
 Email:    admin@example.com
 Password: password123
-Access:   All companies, full control
+URL:      http://admin.localhost:3000
+Access:   All companies, full control via admin subdomain
 ```
 
 ### Acme Corporation
 ```
+URL:      http://acme.localhost:3000
+
 Manager:
   Email:    manager@acme.com
   Password: password123
@@ -74,6 +77,8 @@ User:
 
 ### Globex Inc
 ```
+URL:      http://globex.localhost:3000
+
 Manager:
   Email:    manager@globex.com
   Password: password123
@@ -115,27 +120,32 @@ Complete credentials and access guide covering:
 ### Test 1: Data Isolation
 
 ```bash
-# Login as Acme manager
-# Email: manager@acme.com
+# Access Acme subdomain
+# URL: http://acme.localhost:3000
+# Login as: manager@acme.com
 # You should see 5 passwords (all Acme's)
 
-# Logout and login as Globex manager
-# Email: manager@globex.com
+# Access Globex subdomain
+# URL: http://globex.localhost:3000
+# Login as: manager@globex.com
 # You should see 3 passwords (all Globex's)
 
 # Data is completely isolated between companies
+# Each company can only access their own subdomain
 ```
 
 ### Test 2: Role-Based Access
 
 ```bash
-# Login as regular user
-# Email: user@acme.com
+# Access Acme subdomain
+# URL: http://acme.localhost:3000
+# Login as: user@acme.com
 # Try to create a new password
 # Result: Should see "Not Authorized" error
 
 # Login as manager
-# Email: manager@acme.com
+# URL: http://acme.localhost:3000
+# Login as: manager@acme.com
 # Try to create a new password
 # Result: Should succeed
 ```
@@ -143,37 +153,47 @@ Complete credentials and access guide covering:
 ### Test 3: Admin Access
 
 ```bash
-# Login as admin
-# Email: admin@example.com
+# Access admin subdomain
+# URL: http://admin.localhost:3000
+# Login as: admin@example.com
 # Visit /admin/companies
-# Result: Should see both Acme and Globex
+# Result: Should see all companies (Admin, Acme, Globex)
 # Can manage all companies and users
+# Can view analytics across all companies
 ```
 
 ## Accessing the Application
+
+**Important:** The application uses subdomain-based routing. You must access via subdomain.
 
 1. **Start the server:**
    ```bash
    bin/dev
    ```
 
-2. **Open browser:**
-   ```
-   http://localhost:3000
-   ```
+2. **Access via subdomain:**
+   - **Admin:** `http://admin.localhost:3000`
+   - **Acme:** `http://acme.localhost:3000`
+   - **Globex:** `http://globex.localhost:3000`
+   - Base domain (`http://localhost:3000`) is **blocked**
 
 3. **Sign in:**
    - Click "Sign In"
    - Use any credentials above
    - You'll be redirected to the dashboard
 
+**Note for Local Development:**
+Make sure your `/etc/hosts` file includes entries for subdomain routing if needed. Modern browsers and Rails development server should handle `*.localhost` automatically.
+
 ## Admin Dashboard
 
-After logging in as admin (`admin@example.com`), you can access:
+After logging in as admin via `http://admin.localhost:3000` (`admin@example.com`), you can access:
 
-- **Dashboard:** `http://localhost:3000/admin/dashboard`
-- **Companies:** `http://localhost:3000/admin/companies`
-- **Analytics:** `http://localhost:3000/admin/analytics`
+- **Dashboard:** `http://admin.localhost:3000/admin/dashboard`
+- **Companies:** `http://admin.localhost:3000/admin/companies`
+- **Analytics:** `http://admin.localhost:3000/admin/analytics`
+
+**Important:** Admin features are only accessible via the `admin` subdomain.
 
 ## Features to Test
 
@@ -236,9 +256,10 @@ SecurityEvent.all.map { |e| [e.company.name, e.event_type, e.severity] }
 - Restart your Rails server
 
 ### Can't See Admin Dashboard?
-- Ensure you're logged in as `admin@example.com`
-- Visit `http://localhost:3000/admin`
-- Only admins can access `/admin` routes
+- Ensure you're accessing via `http://admin.localhost:3000` (not base domain)
+- Ensure you're logged in as `admin@example.com` (user in admin company)
+- Visit `http://admin.localhost:3000/admin`
+- Only admin company users can access `/admin` routes via admin subdomain
 
 ## Next Steps
 

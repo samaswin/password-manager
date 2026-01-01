@@ -2,7 +2,13 @@
 
 ## Overview
 
-This password manager uses a **multi-tenant architecture** where each company (tenant) has complete data isolation. Users belong to a single company, and can only access data within their company - except for admins who have cross-company access.
+This password manager uses a **subdomain-based multi-tenant architecture** where each company (tenant) has complete data isolation. The application uses subdomain routing to determine which company's data to serve, ensuring complete separation between tenants.
+
+**Key Features:**
+- Subdomain-based routing (e.g., `acme.localhost:3000`, `admin.localhost:3000`)
+- Base domain access is blocked (must use subdomain)
+- Admin company for super admin access
+- Complete data isolation per company
 
 ## Architecture Components
 
@@ -23,11 +29,18 @@ end
 
 **Key Fields:**
 - `name` - Company name
-- `subdomain` - Unique subdomain (optional, for future subdomain-based routing)
+- `subdomain` - Unique subdomain (required, used for routing)
+- `is_admin_company` - Boolean flag for admin company (special company for super admins)
 - `plan` - Subscription plan (free, basic, premium, enterprise)
 - `max_users` - Maximum number of users allowed
 - `active` - Whether the company is active
 - `settings` - JSONB field for company-specific settings
+
+**Admin Company:**
+- Special company with `is_admin_company = true`
+- Must have `subdomain = 'admin'`
+- Users in admin company can manage all companies
+- Accessible via `admin.localhost:3000` (or `admin.yourdomain.com` in production)
 
 ### 2. User Model
 
@@ -45,7 +58,8 @@ end
 ```
 
 **Roles:**
-- **Admin**: System-wide access, can manage all companies, users, and passwords
+- **Admin** (in Admin Company): System-wide access, can manage all companies, users, and passwords via admin subdomain
+- **Admin** (in regular company): Company-level admin, manages users and passwords within their company
 - **Manager**: Can create, edit, and delete passwords and manage users within their company
 - **User**: Read-only access to view passwords within their company
 
@@ -73,66 +87,100 @@ We use the [acts_as_tenant](https://github.com/ErwinM/acts_as_tenant) gem for te
 
 ## How It Works
 
-### 1. Tenant Context Setting
+### 1. Subdomain-Based Routing
 
-When a user logs in, the tenant context is set in [ApplicationController:11](app/controllers/application_controller.rb#L11):
+The application uses **subdomain routing** to determine which company's data to serve. This is handled by the `SubdomainHandler` middleware that runs before all requests.
+
+**Access URLs:**
+- Admin: `http://admin.localhost:3000` (or `admin.yourdomain.com` in production)
+- Company: `http://{subdomain}.localhost:3000` (e.g., `acme.localhost:3000`)
+- Base domain (`localhost:3000`) is **blocked** - returns error page
+
+**Middleware Flow:**
+```ruby
+# app/middleware/subdomain_handler.rb
+class SubdomainHandler
+  def call(env)
+    request = ActionDispatch::Request.new(env)
+    subdomain = extract_subdomain(request)
+    
+    # Block base domain access
+    return render_error unless subdomain.present?
+    
+    # Set tenant based on subdomain
+    if subdomain == 'admin'
+      company = Company.find_by(is_admin_company: true)
+    else
+      company = Company.find_by(subdomain: subdomain, active: true)
+    end
+    
+    ActsAsTenant.current_tenant = company
+  end
+end
+```
+
+### 2. Tenant Context Setting
+
+The tenant is set by middleware **before** the request reaches controllers:
 
 ```ruby
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  # This filter sets the tenant based on current_user
   set_current_tenant_through_filter
-  before_action :set_current_attributes, unless: :devise_controller?
+  before_action :verify_tenant_access, unless: :devise_controller?
 
   private
 
-  # Called by acts_as_tenant to determine current tenant
+  # Tenant is already set by SubdomainHandler middleware
   def current_tenant
-    current_user&.company
+    ActsAsTenant.current_tenant
   end
 
-  def set_current_attributes
-    if current_user
-      Current.user = current_user
-      Current.company = current_user.company
+  # Verify user belongs to the tenant company
+  def verify_tenant_access
+    tenant = ActsAsTenant.current_tenant
+    
+    if tenant.is_admin_company?
+      # Admin company: user must belong to admin company
+      unless current_user&.company&.is_admin_company?
+        redirect_to root_path, alert: "Access denied"
+      end
+    else
+      # Regular company: user must belong to this company
+      unless current_user&.company_id == tenant.id
+        sign_out current_user
+        redirect_to new_user_session_path
+      end
     end
-    Current.request_id = request.uuid
-    Current.user_agent = request.user_agent
-    Current.ip_address = request.remote_ip
   end
 end
 ```
 
 **Flow:**
-1. User logs in via Devise
-2. `set_current_tenant_through_filter` calls `current_tenant`
-3. Current tenant is set to `current_user.company`
-4. All subsequent queries are automatically scoped to this company
+1. Request comes in with subdomain (e.g., `acme.localhost:3000`)
+2. `SubdomainHandler` middleware extracts subdomain and sets tenant
+3. User logs in via Devise (without tenant scoping)
+4. `ApplicationController` verifies user belongs to the tenant company
+5. All subsequent queries are automatically scoped to this company
 
-### 2. Login Process (Devise Integration)
+### 3. Login Process (Devise Integration)
 
-The login process requires special handling to avoid tenant errors:
+The login process works with subdomain-based routing:
 
 ```ruby
 # app/controllers/users/sessions_controller.rb
 class Users::SessionsController < Devise::SessionsController
   skip_before_action :authenticate_user!, only: [:new, :create]
 
-  # Login must happen without tenant context
-  def new
-    ActsAsTenant.without_tenant do
-      super
-    end
-  end
-
+  # Login happens without tenant scoping (tenant is set by middleware)
   def create
     ActsAsTenant.without_tenant do
       super do |resource|
-        # Set tenant AFTER successful authentication
+        # Tenant is already set by SubdomainHandler middleware
+        # Just set current attributes
         if resource.persisted?
-          ActsAsTenant.current_tenant = resource.company
           Current.user = resource
-          Current.company = resource.company
+          Current.company = ActsAsTenant.current_tenant || resource.company
         end
       end
     end
@@ -141,26 +189,30 @@ end
 ```
 
 **Why `without_tenant`?**
-- During login, no user is authenticated yet
-- We can't determine the tenant before authentication
-- After login succeeds, we explicitly set the tenant
+- User lookup must happen without tenant scoping (User model doesn't use acts_as_tenant)
+- Tenant is already set by `SubdomainHandler` middleware based on subdomain
+- After login, `ApplicationController` verifies user belongs to the tenant company
 
-### 3. Data Isolation
+### 4. Data Isolation
 
-All models with `acts_as_tenant(:company)` are automatically scoped:
+All models with `acts_as_tenant(:company)` are automatically scoped to the tenant set by middleware:
 
 ```ruby
-# When logged in as Acme user
+# When accessing acme.localhost:3000
+# SubdomainHandler sets tenant to Acme company
 Password.all  # Returns only Acme's passwords
-User.all      # Returns only Acme's users
 
-# Explicit tenant switching (admin only)
-ActsAsTenant.with_tenant(globex) do
-  Password.all  # Returns Globex's passwords
+# When accessing globex.localhost:3000
+# SubdomainHandler sets tenant to Globex company
+Password.all  # Returns only Globex's passwords
+
+# Admin company can query across all tenants
+ActsAsTenant.without_tenant do
+  Password.all  # Returns all passwords across all companies
 end
 ```
 
-### 4. Current Attributes (Thread-Safe Context)
+### 5. Current Attributes (Thread-Safe Context)
 
 We use [ActiveSupport::CurrentAttributes](app/models/current.rb) for request-scoped data:
 
@@ -181,29 +233,46 @@ Current.ip_address # => request IP for audit logging
 
 ## Admin Cross-Tenant Access
 
-Admins can access data across all companies using the admin controllers:
+Super admins (users in the admin company) can access data across all companies via the `admin` subdomain:
 
 ```ruby
 # app/controllers/admin/base_controller.rb
-class Admin::BaseController < ApplicationController
-  before_action :require_admin
+module Admin
+  class BaseController < ApplicationController
+    before_action :ensure_admin_company!
+    before_action :ensure_admin!
 
-  private
+    private
 
-  def require_admin
-    unless current_user&.admin?
-      flash[:alert] = "Access denied. Admin privileges required."
-      redirect_to root_path
+    # Verify we're on admin subdomain
+    def ensure_admin_company!
+      tenant = ActsAsTenant.current_tenant
+      unless tenant&.is_admin_company?
+        redirect_to root_path, alert: "Access denied. Admin subdomain required."
+      end
+    end
+
+    # Verify user is admin in admin company
+    def ensure_admin!
+      unless current_user&.admin? && current_user&.company&.is_admin_company?
+        redirect_to root_path, alert: "Access denied. Admin privileges required."
+      end
     end
   end
 end
 ```
 
-**Admin Features:**
+**Admin Company Features:**
+- Access via `admin.localhost:3000` (or `admin.yourdomain.com`)
 - View and manage all companies
 - View and manage users across companies
 - Access analytics and audit logs system-wide
-- Switch tenant context when needed
+- Query across all tenants using `ActsAsTenant.without_tenant`
+
+**Access Requirements:**
+- Must access via `admin` subdomain
+- User must belong to admin company
+- User must have `role = 'admin'`
 
 ## Security Considerations
 
@@ -271,6 +340,7 @@ CREATE TABLE companies (
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
   subdomain VARCHAR UNIQUE,
+  is_admin_company BOOLEAN DEFAULT false NOT NULL,
   plan VARCHAR DEFAULT 'free',
   max_users INTEGER DEFAULT 10,
   active BOOLEAN DEFAULT true,
@@ -278,7 +348,15 @@ CREATE TABLE companies (
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL
 );
+
+CREATE INDEX index_companies_on_is_admin_company ON companies(is_admin_company);
+CREATE INDEX index_companies_on_subdomain ON companies(subdomain);
 ```
+
+**Admin Company Constraints:**
+- Only one company can have `is_admin_company = true`
+- Admin company must have `subdomain = 'admin'`
+- Regular companies cannot use `subdomain = 'admin'`
 
 ### Users Table (Multi-Tenant)
 
@@ -330,45 +408,65 @@ CREATE INDEX index_passwords_on_created_by_id ON passwords(created_by_id);
 
 ### Seed Data
 
-The seed file creates two companies for testing:
+The seed file creates three companies for testing:
 
 ```bash
 rails db:seed
 ```
 
 **Companies:**
-- Acme Corporation (5 passwords)
-- Globex Inc (3 passwords)
+- **Admin Company** (subdomain: `admin`) - Special company for super admins
+- **Acme Corporation** (subdomain: `acme`) - 5 passwords
+- **Globex Inc** (subdomain: `globex`) - 3 passwords
 
 **Users:**
-- Admin: admin@example.com (access to all companies)
-- Acme Manager: manager@acme.com
-- Acme User: user@acme.com
-- Globex Manager: manager@globex.com
-- Globex User: user@globex.com
+- **Super Admin**: admin@example.com (belongs to Admin Company, access via `admin.localhost:3000`)
+- Acme Manager: manager@acme.com (access via `acme.localhost:3000`)
+- Acme User: user@acme.com (access via `acme.localhost:3000`)
+- Globex Manager: manager@globex.com (access via `globex.localhost:3000`)
+- Globex User: user@globex.com (access via `globex.localhost:3000`)
+
+**Access URLs:**
+- Admin: `http://admin.localhost:3000`
+- Acme: `http://acme.localhost:3000`
+- Globex: `http://globex.localhost:3000`
+- Base domain (`http://localhost:3000`) is blocked
 
 ### Testing Isolation
 
+**In Browser:**
+1. Access `http://acme.localhost:3000` - login as `user@acme.com`
+   - Can only see Acme's 5 passwords
+   - Cannot access Globex data
+
+2. Access `http://globex.localhost:3000` - login as `user@globex.com`
+   - Can only see Globex's 3 passwords
+   - Cannot access Acme data
+
+3. Access `http://admin.localhost:3000` - login as `admin@example.com`
+   - Can see and manage all companies
+   - Can view all passwords across companies
+
+**In Rails Console:**
 ```ruby
-# In Rails console
 rails console
 
-# Login as Acme user
-acme_user = User.find_by(email: 'user@acme.com')
-ActsAsTenant.current_tenant = acme_user.company
-Current.user = acme_user
+# Set tenant to Acme company
+acme = Company.find_by(subdomain: 'acme')
+ActsAsTenant.with_tenant(acme) do
+  Password.all  # => Acme's 5 passwords
+end
 
-# Can only see Acme's passwords
-Password.all  # => Acme's 5 passwords
-User.all      # => Acme's 3 users
+# Set tenant to Globex company
+globex = Company.find_by(subdomain: 'globex')
+ActsAsTenant.with_tenant(globex) do
+  Password.all  # => Globex's 3 passwords
+end
 
-# Switch to Globex
-globex_user = User.find_by(email: 'user@globex.com')
-ActsAsTenant.current_tenant = globex_user.company
-
-# Now see Globex's data
-Password.all  # => Globex's 3 passwords
-User.all      # => Globex's 3 users
+# Admin company can query across all tenants
+ActsAsTenant.without_tenant do
+  Password.count  # => Total passwords across all companies
+end
 ```
 
 ## Common Patterns
@@ -392,13 +490,14 @@ end
 ### Querying Records
 
 ```ruby
-# All queries are automatically scoped
+# All queries are automatically scoped to tenant set by subdomain
 @passwords = Password.where(category: 'app')  # Only current company's app passwords
 
-# For admins, explicitly set tenant
-if current_user.admin?
-  ActsAsTenant.with_tenant(company) do
-    @passwords = Password.all
+# For admin company, query across all tenants
+if current_user.company.is_admin_company?
+  ActsAsTenant.without_tenant do
+    @all_passwords = Password.all  # All passwords across all companies
+    @all_companies = Company.all
   end
 end
 ```

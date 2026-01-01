@@ -5,12 +5,14 @@ module Admin
     before_action :set_company, only: [:show, :edit, :update, :destroy, :statistics]
 
     def index
-      @q = Company.ransack(params[:q])
-      @companies = @q.result
-        .includes(:users)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(20)
+      ActsAsTenant.without_tenant do
+        @q = Company.ransack(params[:q])
+        @companies = @q.result
+          .includes(:users)
+          .order(created_at: :desc)
+          .page(params[:page])
+          .per(20)
+      end
     end
 
     def show
@@ -102,7 +104,9 @@ module Admin
     private
 
     def set_company
-      @company = Company.find(params[:id])
+      ActsAsTenant.without_tenant do
+        @company = Company.find(params[:id])
+      end
     end
 
     def company_params

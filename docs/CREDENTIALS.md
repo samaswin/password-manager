@@ -2,31 +2,34 @@
 
 ## Quick Start
 
-After running `rails db:seed`, you'll have access to multiple test accounts across two demo companies.
+After running `rails db:seed`, you'll have access to multiple test accounts across three demo companies (including the admin company).
+
+**Important:** The application uses subdomain-based routing. You must access via subdomain URLs.
 
 ## Test Accounts
 
-### System Administrator
+### System Administrator (Admin Company)
 
-**Full system access - can manage all companies and users**
+**Full system access - can manage all companies and users via admin subdomain**
 
 ```
 Email:    admin@example.com
 Password: password123
 Role:     Admin
-Company:  Acme Corporation
+Company:  Admin Company
+URL:      http://admin.localhost:3000
 ```
 
 **Permissions:**
 - View and manage ALL companies
 - View and manage ALL users across companies
-- Access admin dashboard (`/admin`)
+- Access admin dashboard (`/admin`) via admin subdomain
 - View system-wide analytics
 - Access audit logs across all companies
-- Create, edit, delete any password
+- Create, edit, delete any password across all companies
 
 **How to Login:**
-1. Visit `http://localhost:3000`
+1. Visit `http://admin.localhost:3000` (admin subdomain required)
 2. Click "Sign In"
 3. Enter email: `admin@example.com`
 4. Enter password: `password123`
@@ -36,10 +39,12 @@ Company:  Acme Corporation
 
 ### Acme Corporation Accounts
 
-**Company:** Acme Corporation
-**Plan:** Enterprise
-**Max Users:** 50
-**Current Users:** 3
+**Company:** Acme Corporation  
+**Subdomain:** `acme`  
+**URL:** `http://acme.localhost:3000`  
+**Plan:** Enterprise  
+**Max Users:** 50  
+**Current Users:** 3  
 **Passwords:** 5
 
 #### Manager Account
@@ -48,6 +53,7 @@ Company:  Acme Corporation
 Email:    manager@acme.com
 Password: password123
 Role:     Manager
+URL:      http://acme.localhost:3000
 ```
 
 **Permissions:**
@@ -70,6 +76,7 @@ Role:     Manager
 Email:    user@acme.com
 Password: password123
 Role:     User
+URL:      http://acme.localhost:3000
 ```
 
 **Permissions:**
@@ -82,10 +89,12 @@ Role:     User
 
 ### Globex Inc Accounts
 
-**Company:** Globex Inc
-**Plan:** Premium
-**Max Users:** 25
-**Current Users:** 3
+**Company:** Globex Inc  
+**Subdomain:** `globex`  
+**URL:** `http://globex.localhost:3000`  
+**Plan:** Premium  
+**Max Users:** 25  
+**Current Users:** 3  
 **Passwords:** 3
 
 #### Manager Account
@@ -94,6 +103,7 @@ Role:     User
 Email:    manager@globex.com
 Password: password123
 Role:     Manager
+URL:      http://globex.localhost:3000
 ```
 
 **Permissions:**
@@ -113,6 +123,7 @@ Role:     Manager
 Email:    user@globex.com
 Password: password123
 Role:     User
+URL:      http://globex.localhost:3000
 ```
 
 **Permissions:**
@@ -142,7 +153,13 @@ bin/dev
 
 ### 2. Access the Application
 
-Visit: `http://localhost:3000`
+**Important:** You must access via subdomain. The base domain is blocked.
+
+- **Admin:** `http://admin.localhost:3000`
+- **Acme:** `http://acme.localhost:3000`
+- **Globex:** `http://globex.localhost:3000`
+
+Base domain (`http://localhost:3000`) will show an error page.
 
 ### 3. Sign In
 
@@ -153,30 +170,35 @@ Visit: `http://localhost:3000`
 ### 4. Test Different Roles
 
 **To test Admin features:**
-1. Login as `admin@example.com`
-2. Visit `/admin` to see the admin dashboard
-3. Navigate to "Companies" to manage all companies
-4. Navigate to "Analytics" for system-wide reports
+1. Visit `http://admin.localhost:3000`
+2. Login as `admin@example.com`
+3. Visit `/admin` to see the admin dashboard
+4. Navigate to "Companies" to manage all companies
+5. Navigate to "Analytics" for system-wide reports
 
 **To test Manager features:**
-1. Login as `manager@acme.com`
-2. Create a new password entry
-3. Visit `/manager/users` to manage company users
-4. Try editing or deleting passwords
+1. Visit `http://acme.localhost:3000`
+2. Login as `manager@acme.com`
+3. Create a new password entry
+4. Visit `/manager/users` to manage company users
+5. Try editing or deleting passwords
 
 **To test User (read-only) features:**
-1. Login as `user@acme.com`
-2. Try to create a new password (should see "Not Authorized")
-3. View existing passwords
-4. Copy passwords to clipboard
+1. Visit `http://acme.localhost:3000`
+2. Login as `user@acme.com`
+3. Try to create a new password (should see "Not Authorized")
+4. View existing passwords
+5. Copy passwords to clipboard
 
 **To test Multi-Tenancy:**
-1. Login as `manager@acme.com`
-2. Note you see 5 passwords (all for Acme)
-3. Logout
-4. Login as `manager@globex.com`
-5. Note you see 3 different passwords (all for Globex)
-6. The companies cannot see each other's data
+1. Visit `http://acme.localhost:3000`
+2. Login as `manager@acme.com`
+3. Note you see 5 passwords (all for Acme)
+4. Logout
+5. Visit `http://globex.localhost:3000`
+6. Login as `manager@globex.com`
+7. Note you see 3 different passwords (all for Globex)
+8. The companies cannot see each other's data - each must use their own subdomain
 
 ---
 
@@ -186,7 +208,7 @@ After logging in as admin, you can access:
 
 ### 1. Admin Dashboard (`/admin`)
 
-**URL:** `http://localhost:3000/admin/dashboard`
+**URL:** `http://admin.localhost:3000/admin/dashboard`
 
 **Features:**
 - System overview
@@ -196,7 +218,7 @@ After logging in as admin, you can access:
 
 ### 2. Companies Management (`/admin/companies`)
 
-**URL:** `http://localhost:3000/admin/companies`
+**URL:** `http://admin.localhost:3000/admin/companies`
 
 **Features:**
 - List all companies
@@ -221,7 +243,7 @@ Update details and save
 
 ### 3. Analytics Dashboard (`/admin/analytics`)
 
-**URL:** `http://localhost:3000/admin/analytics`
+**URL:** `http://admin.localhost:3000/admin/analytics`
 
 **Features:**
 - Password strength distribution
@@ -266,8 +288,9 @@ Update details and save
 
 ### Create a New Company
 
-1. Login as `admin@example.com`
-2. Navigate to `/admin/companies`
+1. Visit `http://admin.localhost:3000`
+2. Login as `admin@example.com`
+3. Navigate to `/admin/companies`
 3. Click "New Company"
 4. Fill in:
    - Name: "StartupXYZ"
@@ -278,8 +301,9 @@ Update details and save
 
 ### Create a Manager for a Company
 
-1. Login as `admin@example.com`
-2. Navigate to `/admin/companies`
+1. Visit `http://admin.localhost:3000`
+2. Login as `admin@example.com`
+3. Navigate to `/admin/companies`
 3. Click on a company (e.g., "Acme Corporation")
 4. Click "Add User" or navigate to users management
 5. Fill in:
@@ -292,8 +316,9 @@ Update details and save
 
 ### View Audit Logs for a Company
 
-1. Login as `admin@example.com`
-2. Navigate to admin dashboard
+1. Visit `http://admin.localhost:3000`
+2. Login as `admin@example.com`
+3. Navigate to admin dashboard
 3. Select a company
 4. View audit logs showing:
    - Who created passwords
@@ -304,8 +329,9 @@ Update details and save
 
 ### Generate Analytics Report
 
-1. Login as `admin@example.com`
-2. Navigate to `/admin/analytics`
+1. Visit `http://admin.localhost:3000`
+2. Login as `admin@example.com`
+3. Navigate to `/admin/analytics`
 3. View charts for:
    - Password strength distribution
    - User activity over time
@@ -323,23 +349,25 @@ All API endpoints require authentication. After logging in through the web inter
 
 ### API Endpoints
 
-**Base URL:** `http://localhost:3000/api/v1`
+**Base URLs:**
+- Admin: `http://admin.localhost:3000/api/v1`
+- Company: `http://{subdomain}.localhost:3000/api/v1` (e.g., `http://acme.localhost:3000/api/v1`)
 
 #### Get Current User
 ```bash
-curl -X GET http://localhost:3000/api/v1/user/me \
+curl -X GET http://acme.localhost:3000/api/v1/user/me \
   -H "Cookie: your_session_cookie"
 ```
 
 #### List Passwords
 ```bash
-curl -X GET http://localhost:3000/api/v1/passwords \
+curl -X GET http://acme.localhost:3000/api/v1/passwords \
   -H "Cookie: your_session_cookie"
 ```
 
 #### Create Password
 ```bash
-curl -X POST http://localhost:3000/api/v1/passwords \
+curl -X POST http://acme.localhost:3000/api/v1/passwords \
   -H "Cookie: your_session_cookie" \
   -H "Content-Type: application/json" \
   -d '{
@@ -374,10 +402,15 @@ user = User.find_by(email: 'admin@example.com')
 user.admin?  # => true
 user.company.name  # => "Acme Corporation"
 
-# Set tenant context
-acme = Company.find_by(name: 'Acme Corporation')
+# Set tenant context (for testing)
+acme = Company.find_by(subdomain: 'acme')
 ActsAsTenant.with_tenant(acme) do
   Password.all  # => Only Acme's passwords
+end
+
+# Query across all tenants (admin company only)
+ActsAsTenant.without_tenant do
+  Password.count  # => Total passwords across all companies
 end
 
 # Create a new password for a company
@@ -441,13 +474,16 @@ end
 **Problem:** Redirected when visiting `/admin`
 
 **Solution:**
-1. Ensure you're logged in as `admin@example.com`
-2. Check user role is 'admin':
+1. Ensure you're accessing via `http://admin.localhost:3000` (admin subdomain required)
+2. Ensure you're logged in as `admin@example.com` (must belong to admin company)
+3. Check user belongs to admin company:
    ```bash
    rails console
-   User.find_by(email: 'admin@example.com').role  # Should return "admin"
+   admin = User.find_by(email: 'admin@example.com')
+   admin.role  # Should return "admin"
+   admin.company.is_admin_company?  # Should return true
    ```
-3. Only admins can access `/admin` routes
+4. Only admin company users can access `/admin` routes via admin subdomain
 
 ### NoTenantSet Error
 
@@ -455,8 +491,19 @@ end
 
 **Solution:**
 - This has been fixed in the codebase
-- If you still see it, ensure you're logged in before accessing any pages
-- The error occurs when trying to access company-scoped data without authentication
+- Ensure you're accessing via subdomain (e.g., `acme.localhost:3000`, not `localhost:3000`)
+- Ensure you're logged in before accessing any pages
+- The error occurs when trying to access company-scoped data without authentication or subdomain
+
+### Base Domain Blocked
+
+**Problem:** Error page when accessing `http://localhost:3000`
+
+**Solution:**
+- This is expected behavior - base domain access is blocked for security
+- Always access via subdomain:
+  - Admin: `http://admin.localhost:3000`
+  - Company: `http://{subdomain}.localhost:3000`
 
 ---
 

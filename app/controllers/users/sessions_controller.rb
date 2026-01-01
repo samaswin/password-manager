@@ -14,11 +14,11 @@ class Users::SessionsController < Devise::SessionsController
   def create
     ActsAsTenant.without_tenant do
       super do |resource|
-        # Set tenant and current attributes after successful login
+        # Tenant is already set by SubdomainHandler middleware based on subdomain
+        # Just set current attributes - tenant verification happens in ApplicationController
         if resource.persisted?
-          ActsAsTenant.current_tenant = resource.company
           Current.user = resource
-          Current.company = resource.company
+          Current.company = ActsAsTenant.current_tenant || resource.company
         end
       end
     end

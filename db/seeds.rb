@@ -5,8 +5,19 @@ ActsAsTenant.without_tenant do
   # Create Companies
   puts "\nCreating companies..."
 
+  # Create Admin Company (special company for super admins)
+  admin_company = Company.find_or_create_by!(name: 'Admin Company') do |c|
+    c.subdomain = 'admin'
+    c.is_admin_company = true
+    c.plan = 'enterprise'
+    c.max_users = 100
+    c.active = true
+  end
+  puts "✓ Created #{admin_company.name} (admin company)"
+
   acme = Company.find_or_create_by!(name: 'Acme Corporation') do |c|
     c.subdomain = 'acme'
+    c.is_admin_company = false
     c.plan = 'enterprise'
     c.max_users = 50
     c.active = true
@@ -15,13 +26,14 @@ ActsAsTenant.without_tenant do
 
   globex = Company.find_or_create_by!(name: 'Globex Inc') do |c|
     c.subdomain = 'globex'
+    c.is_admin_company = false
     c.plan = 'premium'
     c.max_users = 25
     c.active = true
   end
   puts "✓ Created #{globex.name}"
 
-  # Create Admin user (no company - can access all companies)
+  # Create Admin user (belongs to admin company)
   puts "\nCreating admin user..."
   admin = User.find_or_create_by!(email: 'admin@example.com') do |u|
     u.password = 'password123'
@@ -29,8 +41,12 @@ ActsAsTenant.without_tenant do
     u.first_name = 'Super'
     u.last_name = 'Admin'
     u.role = 'admin'
-    u.company = acme  # Admins still need a company in this schema
+    u.company = admin_company
     u.active = true
+  end
+  # Update existing admin user to admin company if it exists
+  if admin.company_id != admin_company.id
+    admin.update!(company: admin_company)
   end
   puts "✓ Created admin: #{admin.email}"
 
@@ -90,6 +106,15 @@ ActsAsTenant.without_tenant do
   # Generate proper 32-byte keys and Base64 encode them
   require 'openssl'
   require 'base64'
+
+  # Create encryption key for admin company (though it may not use passwords)
+  admin_key = CompanyEncryptionKey.find_or_create_by!(company: admin_company, key_version: 1) do |k|
+    # Generate a proper 256-bit (32-byte) encryption key
+    raw_key = OpenSSL::Cipher.new('aes-256-gcm').random_key
+    k.encrypted_master_key = Base64.strict_encode64(raw_key)
+    k.active = true
+  end
+  puts "✓ Created encryption key for #{admin_company.name}"
 
   acme_key = CompanyEncryptionKey.find_or_create_by!(company: acme, key_version: 1) do |k|
     # Generate a proper 256-bit (32-byte) encryption key
@@ -295,26 +320,31 @@ ActsAsTenant.without_tenant do
   puts "Seed data created successfully!"
   puts "="*50
   puts "\nTest Credentials:"
-  puts "\n👤 ADMIN (System-wide access):"
+  puts "\n👤 SUPER ADMIN (System-wide access via admin.localhost:3000):"
   puts "  Email:    admin@example.com"
   puts "  Password: password123"
-  puts "  Company:  Acme Corporation"
-  puts "\n🏢 ACME CORPORATION:"
+  puts "  Company:  Admin Company"
+  puts "  URL:      http://admin.localhost:3000"
+  puts "\n🏢 ACME CORPORATION (acme.localhost:3000):"
   puts "  Manager:"
   puts "    Email:    manager@acme.com"
   puts "    Password: password123"
+  puts "    URL:      http://acme.localhost:3000"
   puts "  User:"
   puts "    Email:    user@acme.com"
   puts "    Password: password123"
-  puts "\n🏢 GLOBEX INC:"
+  puts "    URL:      http://acme.localhost:3000"
+  puts "\n🏢 GLOBEX INC (globex.localhost:3000):"
   puts "  Manager:"
   puts "    Email:    manager@globex.com"
   puts "    Password: password123"
+  puts "    URL:      http://globex.localhost:3000"
   puts "  User:"
   puts "    Email:    user@globex.com"
   puts "    Password: password123"
+  puts "    URL:      http://globex.localhost:3000"
   puts "\n📊 Statistics:"
-  puts "  Companies: 2"
+  puts "  Companies: 3 (1 admin, 2 regular)"
   puts "  Users: 5 (1 admin, 2 managers, 2 users)"
   puts "  Passwords: 8 (5 for Acme, 3 for Globex)"
   puts "  Audit Logs: 2"
@@ -322,8 +352,12 @@ ActsAsTenant.without_tenant do
   puts "\n💡 Next Steps:"
   puts "  1. Run: rails db:seed (if not already done)"
   puts "  2. Start server: bin/dev"
-  puts "  3. Visit: http://localhost:3000"
-  puts "  4. Login with any credentials above"
-  puts "  5. See MULTITENANCY.md for architecture details"
+  puts "  3. Access via subdomain:"
+  puts "     - Admin: http://admin.localhost:3000"
+  puts "     - Acme:  http://acme.localhost:3000"
+  puts "     - Globex: http://globex.localhost:3000"
+  puts "  4. Login with credentials above"
+  puts "  5. Note: localhost:3000 is blocked - subdomain required"
+  puts "  6. See MULTITENANCY.md for architecture details"
   puts "="*50
 end
