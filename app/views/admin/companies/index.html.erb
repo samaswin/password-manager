@@ -1,0 +1,383 @@
+<div class="admin-companies-index">
+  <div class="row">
+    <div class="col s12">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+          <h2 class="admin-page-title">
+            <i class="material-icons">business</i>
+            Companies
+          </h2>
+          <p class="admin-page-subtitle">Manage all companies in the system</p>
+        </div>
+        <div>
+          <%= link_to new_admin_company_path, class: "btn waves-effect waves-light" do %>
+            <i class="material-icons left">add</i>
+            New Company
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Search Form %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <%= search_form_for @q, url: admin_companies_path, method: :get, local: true, class: "row search-form-row" do |f| %>
+            <div class="input-field col s12 m3 l3">
+              <%= f.search_field :name_cont, placeholder: "Search by name" %>
+              <%= f.label :name_cont, "Company Name" %>
+            </div>
+            <div class="input-field col s12 m3 l3">
+              <%= f.search_field :subdomain_cont, placeholder: "Search by subdomain" %>
+              <%= f.label :subdomain_cont, "Subdomain" %>
+            </div>
+            <div class="col s12 m2 l2 select-field-wrapper">
+              <label for="q_plan_eq" class="select-label">Plan</label>
+              <%= f.select :plan_eq, options_for_select([
+                ['All Plans', ''],
+                ['Free', 'free'],
+                ['Basic', 'basic'],
+                ['Premium', 'premium'],
+                ['Enterprise', 'enterprise']
+              ], params.dig(:q, :plan_eq)), {}, { class: "browser-default", id: "q_plan_eq" } %>
+            </div>
+            <div class="col s12 m2 l2 select-field-wrapper">
+              <label for="q_active_eq" class="select-label">Status</label>
+              <%= f.select :active_eq, options_for_select([
+                ['All Status', ''],
+                ['Active', 'true'],
+                ['Inactive', 'false']
+              ], params.dig(:q, :active_eq)), {}, { class: "browser-default", id: "q_active_eq" } %>
+            </div>
+            <div class="col s12 m2 l2 search-button-col">
+              <%= f.submit "Search", class: "btn waves-effect waves-light" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Companies Table %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <% if @companies.any? %>
+            <table class="striped responsive-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Subdomain</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Users</th>
+                  <th>Max Users</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @companies.each do |company| %>
+                  <tr>
+                    <td>
+                      <%= link_to company.name, admin_company_path(company), class: "teal-text text-darken-2" %>
+                    </td>
+                    <td><%= company.subdomain || 'N/A' %></td>
+                    <td>
+                      <span class="badge <%= case company.plan
+                        when 'enterprise' then 'purple'
+                        when 'premium' then 'blue'
+                        when 'basic' then 'green'
+                        else 'grey'
+                      end %>">
+                        <%= company.plan&.capitalize || 'N/A' %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if company.active? %>
+                        <span class="badge green">Active</span>
+                      <% else %>
+                        <span class="badge grey">Inactive</span>
+                      <% end %>
+                    </td>
+                    <td><%= company.users.count %></td>
+                    <td><%= company.max_users %></td>
+                    <td><%= company.created_at.strftime('%Y-%m-%d') %></td>
+                    <td>
+                      <div style="display: flex; gap: 8px;">
+                        <%= link_to admin_company_path(company), class: "btn-small waves-effect waves-light teal", title: "View" do %>
+                          <i class="material-icons">visibility</i>
+                        <% end %>
+                        <%= link_to statistics_admin_company_path(company), class: "btn-small waves-effect waves-light blue", title: "Statistics" do %>
+                          <i class="material-icons">bar_chart</i>
+                        <% end %>
+                        <%= link_to edit_admin_company_path(company), class: "btn-small waves-effect waves-light orange", title: "Edit" do %>
+                          <i class="material-icons">edit</i>
+                        <% end %>
+                        <%= link_to admin_company_path(company), method: :delete, 
+                            data: { confirm: "Are you sure you want to delete #{company.name}? This action cannot be undone." },
+                            class: "btn-small waves-effect waves-light red", title: "Delete" do %>
+                          <i class="material-icons">delete</i>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+
+            <%# Pagination %>
+            <% if @companies.total_pages > 1 %>
+              <div class="row" style="margin-top: 20px;">
+                <div class="col s12 center-align">
+                  <ul class="pagination">
+                    <% if @companies.current_page > 1 %>
+                      <li class="waves-effect">
+                        <%= link_to admin_companies_path(q: params[:q], page: @companies.current_page - 1) do %>
+                          <i class="material-icons">chevron_left</i>
+                        <% end %>
+                      </li>
+                    <% else %>
+                      <li class="disabled">
+                        <a href="#!"><i class="material-icons">chevron_left</i></a>
+                      </li>
+                    <% end %>
+
+                    <% start_page = [@companies.current_page - 2, 1].max %>
+                    <% end_page = [start_page + 4, @companies.total_pages].min %>
+                    <% start_page = [end_page - 4, 1].max if end_page - start_page < 4 %>
+
+                    <% if start_page > 1 %>
+                      <li class="waves-effect">
+                        <%= link_to 1, admin_companies_path(q: params[:q], page: 1) %>
+                      </li>
+                      <% if start_page > 2 %>
+                        <li class="disabled">
+                          <a href="#!">...</a>
+                        </li>
+                      <% end %>
+                    <% end %>
+
+                    <% (start_page..end_page).each do |page| %>
+                      <% if page == @companies.current_page %>
+                        <li class="active teal">
+                          <a href="#!"><%= page %></a>
+                        </li>
+                      <% else %>
+                        <li class="waves-effect">
+                          <%= link_to page, admin_companies_path(q: params[:q], page: page) %>
+                        </li>
+                      <% end %>
+                    <% end %>
+
+                    <% if end_page < @companies.total_pages %>
+                      <% if end_page < @companies.total_pages - 1 %>
+                        <li class="disabled">
+                          <a href="#!">...</a>
+                        </li>
+                      <% end %>
+                      <li class="waves-effect">
+                        <%= link_to @companies.total_pages, admin_companies_path(q: params[:q], page: @companies.total_pages) %>
+                      </li>
+                    <% end %>
+
+                    <% if @companies.current_page < @companies.total_pages %>
+                      <li class="waves-effect">
+                        <%= link_to admin_companies_path(q: params[:q], page: @companies.current_page + 1) do %>
+                          <i class="material-icons">chevron_right</i>
+                        <% end %>
+                      </li>
+                    <% else %>
+                      <li class="disabled">
+                        <a href="#!"><i class="material-icons">chevron_right</i></a>
+                      </li>
+                    <% end %>
+                  </ul>
+                  <p class="grey-text" style="margin-top: 10px;">
+                    Showing <%= @companies.offset_value + 1 %>-<%= [@companies.offset_value + @companies.limit_value, @companies.total_count].min %> of <%= @companies.total_count %> companies
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="center-align" style="padding: 40px;">
+              <i class="material-icons large grey-text">business_center</i>
+              <p class="grey-text" style="margin-top: 20px; font-size: 18px;">
+                <% if params[:q].present? %>
+                  No companies found matching your search criteria.
+                <% else %>
+                  No companies found. Create your first company to get started.
+                <% end %>
+              </p>
+              <% unless params[:q].present? %>
+                <%= link_to new_admin_company_path, class: "btn waves-effect waves-light teal", style: "margin-top: 20px;" do %>
+                  <i class="material-icons left">add</i>
+                  Create Company
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .admin-companies-index {
+    padding: 20px 0;
+  }
+
+  .admin-page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .admin-page-subtitle {
+    margin-bottom: 0;
+  }
+
+  .admin-companies-index .btn-small {
+    padding: 0 8px;
+    height: 32px;
+    line-height: 32px;
+    min-width: 32px;
+  }
+
+  .admin-companies-index .btn-small i {
+    font-size: 18px;
+    line-height: 32px;
+  }
+
+  .admin-companies-index table th {
+    font-weight: 600;
+  }
+
+  .admin-companies-index .badge {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+
+  /* Search Form Styles */
+  .search-form-row {
+    margin-bottom: 0;
+  }
+
+  .search-form-row .input-field {
+    margin-top: 0;
+    margin-bottom: 0;
+    min-height: 65px;
+  }
+
+  .search-form-row .input-field + .input-field {
+    margin-left: 0;
+  }
+
+  .search-form-row .input-field label {
+    left: 0;
+    top: -12px;
+  }
+
+  .search-form-row .input-field input[type=search]:focus + label,
+  .search-form-row .input-field input[type=search]:not(:placeholder-shown) + label,
+  .search-form-row .input-field input[type=search].valid + label {
+    top: -12px;
+    font-size: 0.8rem;
+  }
+
+  /* Select field wrapper for browser-default selects */
+  .select-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    min-height: 65px;
+    padding-top: 20px;
+  }
+
+  .select-field-wrapper .select-label {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    display: block;
+    position: absolute;
+    top: -12px;
+    left: 0;
+    transform: none;
+    pointer-events: none;
+  }
+
+  .select-field-wrapper select.browser-default {
+    height: 45px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  .select-field-wrapper select.browser-default:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(38, 166, 154, 0.25);
+  }
+
+  .search-button-col {
+    display: flex;
+    align-items: flex-end;
+    min-height: 65px;
+    padding-top: 20px;
+  }
+
+  .search-button-col .btn {
+    width: 100%;
+    margin: 0;
+    height: 45px;
+    line-height: 45px;
+  }
+
+  /* Responsive adjustments */
+  @media only screen and (max-width: 992px) {
+    .search-form-row .input-field {
+      min-height: 70px;
+      margin-bottom: 10px;
+    }
+
+    .select-field-wrapper {
+      min-height: 70px;
+      margin-bottom: 10px;
+      padding-top: 20px;
+    }
+
+    .search-button-col {
+      min-height: 70px;
+      padding-top: 20px;
+      margin-bottom: 10px;
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    .search-form-row .input-field {
+      min-height: 65px;
+      margin-bottom: 20px;
+    }
+
+    .select-field-wrapper {
+      min-height: 65px;
+      margin-bottom: 20px;
+      padding-top: 20px;
+    }
+
+    .search-button-col {
+      min-height: 65px;
+      padding-top: 20px;
+      margin-bottom: 20px;
+    }
+  }
+</style>
+

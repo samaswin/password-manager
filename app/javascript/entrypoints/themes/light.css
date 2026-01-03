@@ -181,3 +181,40 @@ body[data-theme="light"] .collection .collection-item {
 body[data-theme="light"] .collection .collection-item:hover {
   background-color: var(--sidebar-hover);
 }
+
+/* Admin Pages */
+body[data-theme="light"] .admin-navbar {
+  background-color: var(--navbar-bg);
+  box-shadow: var(--navbar-shadow);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body[data-theme="light"] .admin-navbar a {
+  color: var(--navbar-text);
+}
+
+body[data-theme="light"] .admin-page-subtitle {
+  color: var(--text-secondary);
+}
+
+body[data-theme="light"] .admin-stat-card .stat-value {
+  color: var(--primary-color);
+}
+
+body[data-theme="light"] .admin-stat-card .stat-detail {
+  color: var(--text-secondary);
+}
+
+body[data-theme="light"] .select-field-wrapper .select-label {
+  color: var(--text-tertiary);
+}
+
+body[data-theme="light"] .select-field-wrapper select.browser-default {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-text);
+}
+
+body[data-theme="light"] .select-field-wrapper select.browser-default:focus {
+  border-color: var(--input-focus);
+}

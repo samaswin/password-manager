@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "SecureVault - Password Manager" %></title>
+    <title><%= content_for(:title) || "Admin - SecureVault" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="SecureVault">
+    <meta name="application-name" content="SecureVault Admin">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
     <%= csrf_meta_tags %>
@@ -23,9 +23,6 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -37,8 +34,28 @@
 
   <body data-theme="<%= user_signed_in? && current_user.preferences&.dig('theme') ? current_user.preferences['theme'] : 'light' %>">
     <div id="vue-app">
-      <%# Vue Navbar Component %>
-      <navbar></navbar>
+      <%# Admin Navbar %>
+      <nav class="admin-navbar">
+        <div class="container">
+          <div class="nav-wrapper">
+            <a href="<%= admin_root_path %>" class="brand-logo">
+              <i class="material-icons">admin_panel_settings</i>
+              Admin Panel
+            </a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <li><a href="<%= admin_root_path %>">Dashboard</a></li>
+              <li><a href="<%= admin_companies_path %>">Companies</a></li>
+              <li><a href="<%= admin_analytics_path %>">Analytics</a></li>
+              <li>
+                <theme-toggle class="navbar-variant"></theme-toggle>
+              </li>
+              <% if user_signed_in? %>
+                <li><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
       <%# Flash Messages %>
       <% if notice || alert %>
@@ -59,39 +76,12 @@
       <% end %>
 
       <%# Main Content %>
-      <main>
-        <%= yield %>
-      </main>
-
-      <%# Footer %>
-      <footer class="page-footer custom-footer">
+      <main class="admin-main">
         <div class="container">
-          <div class="row">
-            <div class="col l6 s12">
-              <h5 class="text-gradient footer-brand">
-                <i class="material-icons">lock</i>
-                SecureVault
-              </h5>
-              <p class="footer-description">
-                Secure password management with AES-256 encryption
-              </p>
-            </div>
-            <div class="col l4 offset-l2 s12">
-              <h6 class="footer-links-title">Links</h6>
-              <ul class="footer-links">
-                <li><a href="/about" class="footer-link">About</a></li>
-                <li><a href="/privacy" class="footer-link">Privacy Policy</a></li>
-                <li><a href="/terms" class="footer-link">Terms of Service</a></li>
-              </ul>
-            </div>
-          </div>
+          <%= yield %>
         </div>
-        <div class="footer-copyright custom-footer-copyright">
-          <div class="container">
-            © <%= Time.current.year %> SecureVault. Built with Rails & Vue.
-          </div>
-        </div>
-      </footer>
+      </main>
     </div>
   </body>
 </html>
+

@@ -276,3 +276,40 @@ body[data-theme="dark"] .sidenav li > a:hover {
 body[data-theme="dark"] .preloader-wrapper .spinner-layer {
   border-color: var(--primary-color);
 }
+
+/* Admin Pages */
+body[data-theme="dark"] .admin-navbar {
+  background-color: var(--navbar-bg) !important;
+  box-shadow: var(--navbar-shadow);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body[data-theme="dark"] .admin-navbar a {
+  color: var(--navbar-text);
+}
+
+body[data-theme="dark"] .admin-page-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+body[data-theme="dark"] .admin-stat-card .stat-value {
+  color: var(--primary-color) !important;
+}
+
+body[data-theme="dark"] .admin-stat-card .stat-detail {
+  color: var(--text-secondary) !important;
+}
+
+body[data-theme="dark"] .select-field-wrapper .select-label {
+  color: var(--text-tertiary) !important;
+}
+
+body[data-theme="dark"] .select-field-wrapper select.browser-default {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+body[data-theme="dark"] .select-field-wrapper select.browser-default:focus {
+  border-color: var(--input-focus) !important;
+}

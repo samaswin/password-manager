@@ -11,8 +11,8 @@
   </div>
 
   <% if @password %>
-    <PasswordForm :password='<%= @password.to_json.html_safe %>' :is-edit="true"></PasswordForm>
+    <password-form :password='<%= @password.to_json.html_safe %>' :is-edit="true"></password-form>
   <% else %>
-    <PasswordForm :is-edit="true"></PasswordForm>
+    <password-form :is-edit="true"></password-form>
   <% end %>
 </div>

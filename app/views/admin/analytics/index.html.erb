@@ -1,0 +1,496 @@
+<div class="admin-analytics">
+  <div class="row">
+    <div class="col s12">
+      <h2 class="admin-page-title">
+        <i class="material-icons">analytics</i>
+        Analytics Dashboard
+      </h2>
+      <p class="admin-page-subtitle">Comprehensive system analytics and insights</p>
+    </div>
+  </div>
+
+  <%# Date Range Filter %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Date Range Filter</span>
+          <div class="row">
+            <div class="col s12">
+              <%= form_with url: admin_analytics_path, method: :get, local: true, class: "date-range-form" do |f| %>
+                <div class="row">
+                  <div class="col s12 m3">
+                    <%= link_to "7 Days", admin_analytics_path(range: '7days'), class: "btn #{params[:range] == '7days' ? 'blue' : 'grey'} waves-effect waves-light" %>
+                  </div>
+                  <div class="col s12 m3">
+                    <%= link_to "30 Days", admin_analytics_path(range: '30days'), class: "btn #{params[:range] == '30days' || params[:range].blank? ? 'blue' : 'grey'} waves-effect waves-light" %>
+                  </div>
+                  <div class="col s12 m3">
+                    <%= link_to "90 Days", admin_analytics_path(range: '90days'), class: "btn #{params[:range] == '90days' ? 'blue' : 'grey'} waves-effect waves-light" %>
+                  </div>
+                  <div class="col s12 m3">
+                    <%= link_to "1 Year", admin_analytics_path(range: 'year'), class: "btn #{params[:range] == 'year' ? 'blue' : 'grey'} waves-effect waves-light" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Overall Metrics Cards %>
+  <div class="row">
+    <div class="col s12 m6 l4">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">business</i>
+            Companies
+          </span>
+          <h3 class="stat-value"><%= @metrics[:total_companies] %></h3>
+          <p class="stat-detail">Active: <%= @metrics[:active_companies] %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l4">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">people</i>
+            Users
+          </span>
+          <h3 class="stat-value"><%= @metrics[:total_users] %></h3>
+          <p class="stat-detail">Active: <%= @metrics[:active_users] %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l4">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">vpn_key</i>
+            Passwords
+          </span>
+          <h3 class="stat-value"><%= @metrics[:total_passwords] %></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l4">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">history</i>
+            Audit Logs
+          </span>
+          <h3 class="stat-value"><%= @metrics[:total_audit_logs] %></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Growth Charts %>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">User Growth</span>
+          <% if @user_growth.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>New Users</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @user_growth.each do |date, count| %>
+                  <tr>
+                    <td><%= date.strftime('%Y-%m-%d') %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No user growth data for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Password Growth</span>
+          <% if @password_growth.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>New Passwords</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @password_growth.each do |date, count| %>
+                  <tr>
+                    <td><%= date.strftime('%Y-%m-%d') %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No password growth data for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Activity Analysis %>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Activity by Action</span>
+          <% if @activity_by_action.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @activity_by_action.each do |action, count| %>
+                  <tr>
+                    <td><%= action || 'N/A' %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No activity data for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Activity by Day</span>
+          <% if @activity_by_day.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Activities</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @activity_by_day.each do |date, count| %>
+                  <tr>
+                    <td><%= date.strftime('%Y-%m-%d') %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No daily activity data for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Password Analysis %>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Password Strength Distribution</span>
+          <% if @strength_distribution.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Strength</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @strength_distribution.each do |strength, count| %>
+                  <tr>
+                    <td><%= strength || 'N/A' %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No password strength data available.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Password Category Distribution</span>
+          <% if @category_distribution.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @category_distribution.each do |category, count| %>
+                  <tr>
+                    <td><%= category || 'Uncategorized' %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No category data available.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Security Events %>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Security Events by Type</span>
+          <% if @security_events_by_type.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Event Type</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @security_events_by_type.each do |event_type, count| %>
+                  <tr>
+                    <td><%= event_type || 'N/A' %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No security events for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Security Events by Severity</span>
+          <% if @security_events_by_severity.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @security_events_by_severity.each do |severity, count| %>
+                  <tr>
+                    <td>
+                      <span class="badge <%= severity == 'critical' ? 'red' : severity == 'high' ? 'orange' : severity == 'medium' ? 'yellow' : 'grey' %>">
+                        <%= severity || 'N/A' %>
+                      </span>
+                    </td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No security events for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Top Companies %>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Top Companies by Passwords</span>
+          <% if @top_companies_by_passwords.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Passwords</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @top_companies_by_passwords.each do |(company_id, company_name), count| %>
+                  <tr>
+                    <td><%= company_name || "Company ##{company_id}" %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No company data available.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Top Companies by Users</span>
+          <% if @top_companies_by_users.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Users</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @top_companies_by_users.each do |(company_id, company_name), count| %>
+                  <tr>
+                    <td><%= company_name || "Company ##{company_id}" %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No company data available.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Most Active Users %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Most Active Users</span>
+          <% if @most_active_users.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>User Email</th>
+                  <th>Activity Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @most_active_users.each do |(user_id, user_email), count| %>
+                  <tr>
+                    <td><%= user_email || "User ##{user_id}" %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No active user data for the selected period.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Export Button %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content center-align">
+          <%= link_to admin_analytics_export_path, class: "btn-large blue waves-effect waves-light" do %>
+            <i class="material-icons left">file_download</i>
+            Export Analytics Data
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .admin-analytics {
+    padding: 20px 0;
+  }
+
+  .admin-page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .admin-page-subtitle {
+    margin-bottom: 30px;
+  }
+
+  .admin-stat-card {
+    height: 100%;
+  }
+
+  .admin-stat-card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .admin-stat-card .stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+  .admin-stat-card .stat-detail {
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
+  .date-range-form {
+    margin-top: 10px;
+  }
+
+  .date-range-form .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  @media (min-width: 601px) {
+    .date-range-form .btn {
+      width: auto;
+      margin-right: 10px;
+    }
+  }
+</style>
+

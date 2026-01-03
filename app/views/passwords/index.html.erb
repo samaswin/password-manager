@@ -18,9 +18,9 @@
 
   <!-- Vue Password List Component -->
   <% if @passwords %>
-    <PasswordList :initial-passwords='<%= @passwords.to_json.html_safe %>'></PasswordList>
+    <password-list :initial-passwords='<%= @passwords.to_json.html_safe %>'></password-list>
   <% else %>
-    <PasswordList></PasswordList>
+    <password-list></password-list>
   <% end %>
 
   <!-- Floating Action Button -->

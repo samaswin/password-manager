@@ -6,6 +6,7 @@ import './application.css'
 import './home.css'
 import './auth.css'
 import './passwords.css'
+import './admin.css'
 import M from 'materialize-css'
 
 // Import Turbo and Stimulus
@@ -18,30 +19,81 @@ import { createApp } from 'vue'
 // Auto-import all Vue components from the components directory
 const components = import.meta.glob('../components/**/*.vue', { eager: true })
 
-// Initialize Vue app when DOM is ready
-document.addEventListener('turbo:load', () => {
+// Function to initialize Vue app
+function initializeVueApp() {
+  const element = document.getElementById('vue-app')
+  if (!element) return
+
+  // Store the existing innerHTML BEFORE unmounting to preserve server-rendered content
+  let existingContent = element.innerHTML.trim()
+  
+  // If content is empty, skip mounting to avoid errors
+  // This can happen on Turbo navigation if content was already cleared
+  if (!existingContent) {
+    console.warn('Vue app: No content found in #vue-app, skipping mount')
+    return
+  }
+
+  // Unmount existing app if it exists (this will clear innerHTML)
+  if (element.__vue_app__) {
+    element.__vue_app__.unmount()
+    element.__vue_app__ = null
+  }
+
+  // Create root component that renders the existing content
+  const RootComponent = {
+    template: existingContent
+  }
+
+  // Create and mount new Vue app
+  const app = createApp(RootComponent)
+
+  // Make Materialize available globally in Vue
+  app.config.globalProperties.$M = M
+
+  // Register all components
+  Object.entries(components).forEach(([path, component]) => {
+    const componentName = path.split('/').pop().replace('.vue', '')
+    const componentModule = component.default || component
+    
+    // Register with original name (PascalCase)
+    app.component(componentName, componentModule)
+  })
+
+  app.mount('#vue-app')
+  element.__vue_app__ = app
+}
+
+// Function to initialize Materialize and Vue
+function initializePage() {
   // Initialize Materialize components
   M.AutoInit()
 
   // Additional manual initialization for specific components
   initMaterializeComponents()
 
-  const element = document.getElementById('vue-app')
-  if (element && !element.__vue_app__) {
-    const app = createApp({})
+  // Initialize Vue app
+  initializeVueApp()
+}
 
-    // Make Materialize available globally in Vue
-    app.config.globalProperties.$M = M
+// Handle Turbo navigation events (fires on both forward and back navigation)
+document.addEventListener('turbo:load', () => {
+  // Small delay to ensure DOM is fully ready
+  setTimeout(initializePage, 0)
+})
 
-    // Register all components
-    Object.entries(components).forEach(([path, component]) => {
-      const componentName = path.split('/').pop().replace('.vue', '')
-      app.component(componentName, component.default || component)
-    })
+// Handle initial page load (fallback for when Turbo is not available)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializePage)
+} else {
+  // Use setTimeout to ensure DOM is ready
+  setTimeout(initializePage, 0)
+}
 
-    app.mount('#vue-app')
-    element.__vue_app__ = app
-  }
+// Also handle popstate event as additional fallback for browser back/forward buttons
+window.addEventListener('popstate', () => {
+  // Small delay to ensure Turbo has processed the navigation
+  setTimeout(initializePage, 0)
 })
 
 // Helper function to initialize Materialize components
@@ -89,7 +141,8 @@ function initMaterializeComponents() {
   M.updateTextFields()
 }
 
-// Clean up Vue app when navigating away
+// Clean up Vue app when navigating away to a new page
+// Note: This will be called before turbo:load, which will re-initialize the app
 document.addEventListener('turbo:before-render', () => {
   const element = document.getElementById('vue-app')
   if (element && element.__vue_app__) {

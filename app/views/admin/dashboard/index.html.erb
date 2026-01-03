@@ -1,0 +1,215 @@
+<div class="admin-dashboard">
+  <div class="row">
+    <div class="col s12">
+      <h2 class="admin-page-title">
+        <i class="material-icons">dashboard</i>
+        Admin Dashboard
+      </h2>
+      <p class="admin-page-subtitle">System-wide statistics and activity overview</p>
+    </div>
+  </div>
+
+  <%# Statistics Cards %>
+  <div class="row">
+    <div class="col s12 m6 l3">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">business</i>
+            Total Companies
+          </span>
+          <h3 class="stat-value"><%= @total_companies %></h3>
+          <p class="stat-detail">Active: <%= @active_companies %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l3">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">people</i>
+            Total Users
+          </span>
+          <h3 class="stat-value"><%= @total_users %></h3>
+          <p class="stat-detail">Active: <%= @active_users %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l3">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">vpn_key</i>
+            Total Passwords
+          </span>
+          <h3 class="stat-value"><%= @total_passwords %></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l3">
+      <div class="card admin-stat-card">
+        <div class="card-content">
+          <span class="card-title">
+            <i class="material-icons">security</i>
+            Security Events
+          </span>
+          <h3 class="stat-value"><%= @recent_security_events.count %></h3>
+          <p class="stat-detail">Recent (last 10)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Companies by Plan %>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Companies by Plan</span>
+          <% if @companies_by_plan.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @companies_by_plan.each do |plan, count| %>
+                  <tr>
+                    <td><%= plan || 'N/A' %></td>
+                    <td><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No companies found.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# Top Companies %>
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Top Companies by Password Count</span>
+          <% if @top_companies.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Passwords</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @top_companies.each do |company| %>
+                  <tr>
+                    <td>
+                      <%= link_to company.name, admin_company_path(company) %>
+                    </td>
+                    <td><%= company.passwords_count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No companies found.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Recent Activity %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Recent Activity</span>
+          <% if @recent_activity.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>User</th>
+                  <th>Company</th>
+                  <th>Action</th>
+                  <th>Resource</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_activity.each do |activity| %>
+                  <tr>
+                    <td><%= activity.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+                    <td><%= activity.user&.email || 'N/A' %></td>
+                    <td><%= activity.company&.name || 'N/A' %></td>
+                    <td><%= activity.action %></td>
+                    <td>
+                      <% if activity.password %>
+                        Password: <%= activity.password.name || "##{activity.password.id}" %>
+                      <% elsif activity.user %>
+                        User: <%= activity.user.email %>
+                      <% else %>
+                        N/A
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No recent activity found.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Recent Security Events %>
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Recent Security Events</span>
+          <% if @recent_security_events.any? %>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>User</th>
+                  <th>Company</th>
+                  <th>Event Type</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_security_events.each do |event| %>
+                  <tr>
+                    <td><%= event.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+                    <td><%= event.user&.email || 'N/A' %></td>
+                    <td><%= event.company&.name || 'N/A' %></td>
+                    <td>
+                      <span class="badge <%= event.severity == 'critical' ? 'red' : event.severity == 'high' ? 'orange' : 'yellow' %>">
+                        <%= event.event_type %>
+                      </span>
+                    </td>
+                    <td>
+                      <%= event.description || (event.details.present? ? event.details.to_json : 'N/A') %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No recent security events found.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

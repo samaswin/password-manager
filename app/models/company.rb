@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: companies
+#
+#  id               :bigint           not null, primary key
+#  active           :boolean          default(TRUE)
+#  is_admin_company :boolean          default(FALSE), not null
+#  max_users        :integer          default(10)
+#  name             :string           not null
+#  plan             :string           default("free")
+#  settings         :text
+#  subdomain        :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
+# Indexes
+#
+#  index_companies_on_active            (active)
+#  index_companies_on_is_admin_company  (is_admin_company)
+#  index_companies_on_subdomain         (subdomain) UNIQUE
+#
 class Company < ApplicationRecord
   # Associations
   has_many :users, dependent: :destroy
@@ -33,6 +54,12 @@ class Company < ApplicationRecord
   scope :inactive, -> { where(active: false) }
   scope :admin_company, -> { where(is_admin_company: true) }
   scope :regular_companies, -> { where(is_admin_company: false) }
+
+  # Ransack - Allowlist searchable attributes
+  # Only allow safe, non-sensitive attributes to be searchable
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name subdomain plan active max_users created_at updated_at]
+  end
 
   # Serialization
   serialize :settings, coder: JSON

@@ -2,7 +2,9 @@
   "name": "app",
   "private": true,
   "scripts": {
-    "dev": "bin/dev"
+    "dev": "bin/dev",
+    "lint": "eslint app/javascript --ext .js,.vue",
+    "lint:fix": "eslint app/javascript --ext .js,.vue --fix"
   },
   "browserslist": [
     "defaults"
@@ -17,6 +19,9 @@
   },
   "devDependencies": {
     "vite": "^5.4.21",
-    "vite-plugin-ruby": "^5.1.1"
+    "vite-plugin-ruby": "^5.1.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.28.0",
+    "@vue/eslint-config-prettier": "^9.0.0"
   }
 }

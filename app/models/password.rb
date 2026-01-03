@@ -1,3 +1,48 @@
+# == Schema Information
+#
+# Table name: passwords
+#
+#  id                  :bigint           not null, primary key
+#  active              :boolean          default(TRUE)
+#  auth_tag            :string
+#  category            :string
+#  details             :text
+#  email               :string
+#  encrypted_password  :text
+#  encryption_iv       :string
+#  key                 :string
+#  last_rotated_at     :datetime
+#  name                :string           not null
+#  password_changed_at :datetime
+#  password_copied_at  :datetime
+#  password_viewed_at  :datetime
+#  ssh_finger_print    :string
+#  ssh_private_key     :text
+#  ssh_public_key      :text
+#  strength_score      :integer          default(0)
+#  tags                :string           default([]), is an Array
+#  url                 :string
+#  username            :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  company_id          :bigint
+#  created_by_id       :bigint
+#
+# Indexes
+#
+#  index_passwords_on_active                   (active)
+#  index_passwords_on_company_id               (company_id)
+#  index_passwords_on_company_id_and_active    (company_id,active)
+#  index_passwords_on_company_id_and_category  (company_id,category)
+#  index_passwords_on_created_by_id            (created_by_id)
+#  index_passwords_on_name                     (name)
+#  index_passwords_on_tags                     (tags) USING gin
+#
+# Foreign Keys
+#
+#  fk_rails_...  (company_id => companies.id)
+#  fk_rails_...  (created_by_id => users.id)
+#
 class Password < ApplicationRecord
   # Multi-tenancy
   acts_as_tenant(:company)

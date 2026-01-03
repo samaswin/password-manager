@@ -1,3 +1,33 @@
+# == Schema Information
+#
+# Table name: audit_logs
+#
+#  id          :bigint           not null, primary key
+#  action      :string           not null
+#  ip_address  :inet
+#  metadata    :jsonb
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  company_id  :bigint           not null
+#  password_id :bigint
+#  user_id     :bigint
+#
+# Indexes
+#
+#  index_audit_logs_on_action                     (action)
+#  index_audit_logs_on_company_id                 (company_id)
+#  index_audit_logs_on_company_id_and_action      (company_id,action)
+#  index_audit_logs_on_company_id_and_created_at  (company_id,created_at)
+#  index_audit_logs_on_created_at                 (created_at)
+#  index_audit_logs_on_password_id                (password_id)
+#  index_audit_logs_on_user_id                    (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (company_id => companies.id)
+#  fk_rails_...  (password_id => passwords.id)
+#  fk_rails_...  (user_id => users.id)
+#
 class AuditLog < ApplicationRecord
   belongs_to :company
   belongs_to :user, optional: true

@@ -19,27 +19,36 @@ class SubdomainHandler
       return render_base_domain_error
     end
 
-    # Set tenant based on subdomain
-    ActsAsTenant.without_tenant do
+    # Find company without tenant scoping, then set tenant
+    company = ActsAsTenant.without_tenant do
       if subdomain == ADMIN_SUBDOMAIN
         # Admin subdomain - find admin company
-        company = Company.find_by(is_admin_company: true)
-        if company
-          ActsAsTenant.current_tenant = company
-        else
-          # Admin company doesn't exist - return error
-          return render_admin_company_not_found
-        end
+        Company.find_by(is_admin_company: true)
       elsif subdomain.present? && !EXCLUDED_SUBDOMAINS.include?(subdomain)
         # Regular company subdomain
-        company = Company.find_by(subdomain: subdomain, active: true)
-        if company && !company.is_admin_company?
-          ActsAsTenant.current_tenant = company
-        elsif company.nil?
-          # Company not found - return 404
+        Company.find_by(subdomain: subdomain, active: true)
+      end
+    end
+
+    # Set tenant based on found company
+    if company
+      if subdomain == ADMIN_SUBDOMAIN
+        unless company.is_admin_company?
+          return render_admin_company_not_found
+        end
+        ActsAsTenant.current_tenant = company
+      elsif subdomain.present? && !EXCLUDED_SUBDOMAINS.include?(subdomain)
+        if company.is_admin_company?
           return render_company_not_found(subdomain)
         end
+        ActsAsTenant.current_tenant = company
       end
+    elsif subdomain == ADMIN_SUBDOMAIN
+      # Admin company doesn't exist - return error
+      return render_admin_company_not_found
+    elsif subdomain.present? && !EXCLUDED_SUBDOMAINS.include?(subdomain)
+      # Company not found - return 404
+      return render_company_not_found(subdomain)
     end
 
     @app.call(env)

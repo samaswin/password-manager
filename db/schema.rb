@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_173058) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_01_112238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,6 +25,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_173058) do
     t.bigint "user_id"
     t.index ["action"], name: "index_audit_logs_on_action"
     t.index ["company_id", "action"], name: "index_audit_logs_on_company_id_and_action"
+    t.index ["company_id", "created_at"], name: "index_audit_logs_on_company_id_and_created_at"
     t.index ["company_id"], name: "index_audit_logs_on_company_id"
     t.index ["created_at"], name: "index_audit_logs_on_created_at"
     t.index ["password_id"], name: "index_audit_logs_on_password_id"
@@ -34,6 +35,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_173058) do
   create_table "companies", force: :cascade do |t|
     t.boolean "active", default: true
     t.datetime "created_at", null: false
+    t.boolean "is_admin_company", default: false, null: false
     t.integer "max_users", default: 10
     t.string "name", null: false
     t.string "plan", default: "free"
@@ -41,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_173058) do
     t.string "subdomain"
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_companies_on_active"
+    t.index ["is_admin_company"], name: "index_companies_on_is_admin_company"
     t.index ["subdomain"], name: "index_companies_on_subdomain", unique: true
   end
 
@@ -64,6 +67,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_173058) do
     t.string "permission_level", default: "read", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["active", "expires_at"], name: "index_password_shares_on_active_and_expires_at"
     t.index ["active"], name: "index_password_shares_on_active"
     t.index ["password_id", "user_id"], name: "index_password_shares_on_password_id_and_user_id", unique: true
     t.index ["password_id"], name: "index_password_shares_on_password_id"
@@ -96,6 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_173058) do
     t.string "url"
     t.string "username"
     t.index ["active"], name: "index_passwords_on_active"
+    t.index ["company_id", "active"], name: "index_passwords_on_company_id_and_active"
     t.index ["company_id", "category"], name: "index_passwords_on_company_id_and_category"
     t.index ["company_id"], name: "index_passwords_on_company_id"
     t.index ["created_by_id"], name: "index_passwords_on_created_by_id"
