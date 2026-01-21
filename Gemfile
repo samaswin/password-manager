@@ -33,7 +33,7 @@ gem "chartkick", "~> 5.0"
 gem "groupdate", "~> 6.0"
 
 # HTTP Client for breach check API
-gem "httparty", "~> 0.21"
+gem "httparty", "~> 0.24"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
