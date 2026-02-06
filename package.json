@@ -14,7 +14,7 @@
     "@hotwired/turbo-rails": "^8.0.20",
     "@mdi/font": "^7.4.47",
     "@vitejs/plugin-vue": "^6.0.3",
-    "materialize-css": "^1.0.0-rc.2",
+    "materialize-css": "^1.0.0",
     "vue": "^3.5.26"
   },
   "devDependencies": {
