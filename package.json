@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
-    "@hotwired/turbo-rails": "^8.0.20",
+    "@hotwired/turbo-rails": "^8.0.21",
     "@mdi/font": "^7.4.47",
     "@vitejs/plugin-vue": "^6.0.3",
     "materialize-css": "^1.0.0-rc.2",
